@@ -46,7 +46,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="mt-auto pt-8">
-          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base">
+          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform">
             Send Instructions
           </button>
         </div>

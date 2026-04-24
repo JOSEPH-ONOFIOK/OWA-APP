@@ -40,10 +40,17 @@ export default function OTPVerification() {
   }
 
   const handleVerify = () => {
-    if (!filled) return
+    if (!filled || verifying) return
     setVerifying(true)
     setTimeout(() => { setVerifying(false); navigate('/welcome', { state: { role } }) }, 1500)
   }
+
+  useEffect(() => {
+    if (digits.every(d => d !== '') && !verifying) {
+      setVerifying(true)
+      setTimeout(() => { setVerifying(false); navigate('/welcome', { state: { role } }) }, 1500)
+    }
+  }, [digits])
 
   const handleResend = () => {
     setCountdown(59)
@@ -79,11 +86,11 @@ export default function OTPVerification() {
         <button
           onClick={handleVerify}
           disabled={verifying}
-          className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-colors ${filled ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
+          className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${filled ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
         >
           {verifying
-            ? <><span>Verifying Code</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
-            : 'Verifying Code'}
+            ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
+            : 'Verify Code'}
         </button>
 
         {countdown > 0

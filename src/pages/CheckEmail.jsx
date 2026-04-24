@@ -27,7 +27,7 @@ export default function CheckEmail() {
       <div className="w-full flex flex-col gap-3 mt-2">
         <button
           onClick={() => navigate('/create-password')}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base"
+          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform"
         >
           Open email app
         </button>

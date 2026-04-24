@@ -81,7 +81,7 @@ export default function DriverInfo() {
       <div className="mt-auto pt-8">
         <button
           onClick={() => navigate('/bank-setup', { state })}
-          className={`w-full h-14 rounded-2xl font-semibold text-base transition-colors ${canContinue ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
+          className={`w-full h-14 rounded-2xl font-semibold text-base transition-all active:scale-[0.98] ${canContinue ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
         >
           Continue
         </button>

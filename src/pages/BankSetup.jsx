@@ -65,13 +65,13 @@ export default function BankSetup() {
       <div className="mt-auto pt-8 flex flex-col gap-3">
         <button
           onClick={() => navigate('/welcome', { state })}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base"
+          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform"
         >
           Save
         </button>
         <button
           onClick={() => navigate('/welcome', { state })}
-          className="w-full h-14 rounded-2xl bg-gray-100 text-gray-800 font-semibold text-base"
+          className="w-full h-14 rounded-2xl bg-gray-100 text-gray-800 font-semibold text-base active:scale-[0.98] transition-transform"
         >
           Skip for now
         </button>

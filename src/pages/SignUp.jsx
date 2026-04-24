@@ -96,7 +96,7 @@ export default function SignUp() {
         </div>
 
         <div className="mt-auto pt-8 flex flex-col gap-4">
-          <button type="submit" disabled={loading} className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-colors ${allOk ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}>
+          <button type="submit" disabled={loading} className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${allOk ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}>
             {loading
               ? <><span>Create Account</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
               : 'Create Account'}
