@@ -45,11 +45,11 @@ export default function Login() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1">Welcome Back</h1>
-      <p className="text-sm text-gray-500 mb-8">Log in to continue using OWA.</p>
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1 text-center">Welcome Back</h1>
+      <p className="text-sm text-gray-500 mb-8 text-center">Log in to continue using OWA.</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col flex-1">
         <div className="flex flex-col gap-5">
@@ -84,13 +84,13 @@ export default function Login() {
             {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
           </div>
 
-          <p onClick={() => navigate('/reset-password')} className="text-[0.85rem] font-bold text-gray-900 cursor-pointer">
+          <p onClick={() => navigate('/reset-password')} className="text-[0.85rem] font-bold text-gray-900 cursor-pointer text-center">
             Forgot Password?
           </p>
         </div>
 
         <div className="mt-auto pt-8 flex flex-col gap-4">
-          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform">
+          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none">
             Login
           </button>
           <p className="text-center text-sm text-gray-500">

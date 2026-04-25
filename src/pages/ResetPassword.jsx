@@ -19,11 +19,11 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2">Reset Password</h1>
-      <p className="text-sm text-gray-500 leading-relaxed mb-8">
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2 text-center">Reset Password</h1>
+      <p className="text-sm text-gray-500 leading-relaxed mb-8 text-center">
         Enter the email registered with your account and we'll send an email with a{' '}
         <span className="font-bold text-gray-900">password key</span> to reset your password.
       </p>
@@ -46,7 +46,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="mt-auto pt-8">
-          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform">
+          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none">
             Send Instructions
           </button>
         </div>

@@ -4,7 +4,7 @@ export default function CheckEmail() {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white flex flex-col items-center px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col items-center px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
 
       {/* Illustration */}
       <div className="flex flex-col items-center mb-8 mt-8">
@@ -27,20 +27,20 @@ export default function CheckEmail() {
       <div className="w-full flex flex-col gap-3 mt-2">
         <button
           onClick={() => navigate('/create-password')}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform"
+          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none"
         >
           Open email app
         </button>
         <button
           onClick={() => navigate('/login')}
-          className="w-full h-14 rounded-2xl text-gray-600 font-semibold text-base"
+          className="w-full h-14 rounded-2xl text-gray-600 font-semibold text-base shadow-none"
         >
-          Skip I'll confirm later
+          Skip, I'll confirm later
         </button>
       </div>
 
       <p className="mt-auto pt-10 text-center text-xs text-gray-400 leading-relaxed">
-        didn't receive the email? Check your spam filler,{' '}
+        Didn't receive the email? Check your spam folder,{' '}
         <br />or{' '}
         <span
           onClick={() => navigate('/login')}

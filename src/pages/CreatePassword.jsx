@@ -43,12 +43,12 @@ export default function CreatePassword() {
     `w-full h-14 rounded-2xl border px-4 pr-12 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-white transition-colors focus:border-[#1A6BFF] ${hasErr ? 'border-red-400!' : 'border-gray-200'}`
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2">Create New Account</h1>
-      <p className="text-sm text-gray-500 leading-relaxed mb-8">
-        Your new password must be different from previous used passwords
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2 text-center">Create New Password</h1>
+      <p className="text-sm text-gray-500 leading-relaxed mb-8 text-center">
+        Your new password must be different from previously used passwords
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col flex-1">
@@ -95,13 +95,13 @@ export default function CreatePassword() {
               </button>
             </div>
             <p className={`text-xs mt-1.5 ${errors.confirm ? 'text-red-500' : 'text-gray-400'}`}>
-              {errors.confirm ?? 'Both password must match'}
+              {errors.confirm ?? 'Both passwords must match'}
             </p>
           </div>
         </div>
 
         <div className="mt-auto pt-8">
-          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform">
+          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none">
             Reset Password
           </button>
         </div>

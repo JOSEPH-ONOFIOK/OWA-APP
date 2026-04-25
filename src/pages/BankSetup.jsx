@@ -23,11 +23,11 @@ export default function BankSetup() {
   const [form, setForm] = useState({ bank: '', account: '' })
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2">Set up bank account</h1>
-      <p className="text-sm text-gray-500 leading-relaxed mb-8">
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2 text-center">Set up bank account</h1>
+      <p className="text-sm text-gray-500 leading-relaxed mb-8 text-center">
         This bank details is where you transfer your OWA money into for personal use.
       </p>
 
@@ -65,13 +65,13 @@ export default function BankSetup() {
       <div className="mt-auto pt-8 flex flex-col gap-3">
         <button
           onClick={() => navigate('/welcome', { state })}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform"
+          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none"
         >
           Save
         </button>
         <button
           onClick={() => navigate('/welcome', { state })}
-          className="w-full h-14 rounded-2xl bg-gray-100 text-gray-800 font-semibold text-base active:scale-[0.98] transition-transform"
+          className="w-full h-14 rounded-2xl bg-gray-100 text-gray-800 font-semibold text-base active:scale-[0.98] transition-all shadow-none"
         >
           Skip for now
         </button>

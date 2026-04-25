@@ -6,7 +6,7 @@ export default function UserRoleSelection() {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white flex flex-col items-center justify-center px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col items-center justify-center px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
 
       {/* Plain arrow back — no background box */}
       <button
@@ -18,7 +18,6 @@ export default function UserRoleSelection() {
         </svg>
       </button>
 
-      {/* Centered title + subtitle */}
       <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-4 text-center w-full">
         Are you a passenger or a driver?
       </h1>
@@ -29,10 +28,9 @@ export default function UserRoleSelection() {
         {[
           {
             id: 'passenger',
-            
+            label: 'Passenger',
             icon: (active) => (
-              <svg width="2
-              4" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
             ),
@@ -52,7 +50,7 @@ export default function UserRoleSelection() {
             <button
               key={id}
               onClick={() => setSelected(id)}
-              className={`flex flex-col items-center justify-center gap-3 py-8 rounded-2xl border-2 transition-all active:scale-[0.97] ${active ? 'border-[#1A6BFF]' : 'border-gray-200'}`}
+              className={`flex flex-col items-center justify-center gap-3 py-8 rounded-2xl border-2 transition-all active:scale-[0.97] shadow-none ${active ? 'border-[#1A6BFF]' : 'border-gray-200'}`}
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${active ? 'bg-blue-50' : 'bg-gray-100'}`}>
                 {icon(active)}
@@ -66,7 +64,7 @@ export default function UserRoleSelection() {
       <div className="pt-16 w-full">
         <button
           onClick={() => navigate('/signup', { state: { role: selected } })}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] transition-transform"
+          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none"
         >
           Continue
         </button>

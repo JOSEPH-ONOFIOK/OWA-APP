@@ -30,7 +30,7 @@ export default function DriverInfo() {
   const canContinue = form.tag.trim() && form.vehicle.trim()
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10 relative" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10 relative" style={{ minHeight: '100dvh' }}>
 
       {/* Header row */}
       <div className="flex items-center gap-4 mb-8">
@@ -48,7 +48,7 @@ export default function DriverInfo() {
       {/* Profile picture */}
       <div className="flex justify-center mb-10">
         <div className="relative">
-          <div className="w-[88px] h-[88px] rounded-full border-2 border-[#1A6BFF] bg-gray-100 flex items-center justify-center overflow-hidden">
+          <div className="w-22 h-22 rounded-full border-2 border-[#1A6BFF] bg-gray-100 flex items-center justify-center overflow-hidden">
             <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1A6BFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
@@ -73,7 +73,7 @@ export default function DriverInfo() {
         </div>
 
         <div>
-          <FieldLabel icon={carIcon} text="Vehicle Type (Bus/ Bike/Keke)" />
+          <FieldLabel icon={carIcon} text="Vehicle Type (Bus / Bike / Keke)" />
           <input type="text" value={form.vehicle} onChange={e => setForm({ ...form, vehicle: e.target.value })} placeholder="Enter your vehicle type" className={inputCls} />
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function DriverInfo() {
       <div className="mt-auto pt-8">
         <button
           onClick={() => navigate('/bank-setup', { state })}
-          className={`w-full h-14 rounded-2xl font-semibold text-base transition-all active:scale-[0.98] ${canContinue ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
+          className={`w-full h-14 rounded-2xl font-semibold text-base transition-all active:scale-[0.98] active:brightness-90 shadow-none ${canContinue ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
         >
           Continue
         </button>
@@ -91,7 +91,7 @@ export default function DriverInfo() {
       {sheet && (
         <>
           <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setSheet(false)} />
-          <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 px-6 pt-5 pb-10 shadow-2xl">
+          <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 px-7 pt-5 pb-10 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <span className="text-[1rem] font-bold text-gray-900">Profile picture</span>
               <button onClick={() => setSheet(false)}>

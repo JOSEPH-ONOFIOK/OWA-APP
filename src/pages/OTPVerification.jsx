@@ -59,11 +59,11 @@ export default function OTPVerification() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1">Enter the code</h1>
-      <p className="text-sm text-gray-500 mb-10">OWA Sent your code via Whatsapp to +2347011286879</p>
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1 text-center">Enter the code</h1>
+      <p className="text-sm text-gray-500 mb-10 text-center">OWA sent your code via Whatsapp to +2347011286879</p>
 
       {/* OTP boxes */}
       <div className="flex gap-3">
@@ -86,7 +86,7 @@ export default function OTPVerification() {
         <button
           onClick={handleVerify}
           disabled={verifying}
-          className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${filled ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
+          className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] active:brightness-90 shadow-none ${filled ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
         >
           {verifying
             ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
@@ -98,7 +98,7 @@ export default function OTPVerification() {
               Resend code{' '}
               <span className="text-[#1A6BFF] font-semibold">0:{String(countdown).padStart(2, '0')}s</span>
             </p>
-          : <button onClick={handleResend} className="w-full h-14 rounded-2xl bg-blue-300 text-white font-semibold text-base">
+          : <button onClick={handleResend} className="w-full h-14 rounded-2xl bg-blue-300 text-white font-semibold text-base shadow-none">
               Resend Code
             </button>}
       </div>

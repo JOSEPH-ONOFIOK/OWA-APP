@@ -51,12 +51,12 @@ export default function SignUp() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1">Create Your OWA Account</h1>
-      <p className="text-sm text-gray-500 mb-8">
-        {allOk ? 'Join thousands of students and drivers making campus transport easier.' : 'Join thousands of students making campus transport easier.'}
+      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1 text-center">Create Your OWA Account</h1>
+      <p className="text-sm text-gray-500 mb-8 text-center">
+        Join thousands of students making campus transport easier.
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col flex-1">
@@ -96,7 +96,7 @@ export default function SignUp() {
         </div>
 
         <div className="mt-auto pt-8 flex flex-col gap-4">
-          <button type="submit" disabled={loading} className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${allOk ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}>
+          <button type="submit" disabled={loading} className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] active:brightness-90 shadow-none ${allOk ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}>
             {loading
               ? <><span>Create Account</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
               : 'Create Account'}
