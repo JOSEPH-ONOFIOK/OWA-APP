@@ -1,21 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const Back = ({ onClick }) => (
-  <button onClick={onClick} className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-6 shrink-0 active:scale-[0.95] transition-transform">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  </button>
-)
-
-const FieldLabel = ({ icon, text }) => (
-  <div className="flex items-center gap-2 mb-2">
-    {icon}
-    <span className="text-[0.82rem] font-semibold text-gray-700">{text}</span>
-  </div>
-)
-
 const EyeIcon = ({ open }) => open
   ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
   : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -23,7 +8,12 @@ const EyeIcon = ({ open }) => open
 const phoneIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
 const lockIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
 
-const inputCls = 'w-full h-14 rounded-2xl border border-gray-200 px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#1A6BFF] bg-white transition-colors'
+const Label = ({ icon, text }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+    {icon}
+    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>{text}</span>
+  </div>
+)
 
 export default function Login() {
   const navigate = useNavigate()
@@ -44,61 +34,102 @@ export default function Login() {
     if (validate()) navigate('/welcome-back')
   }
 
+  const inputStyle = {
+    width: '100%', height: 56, borderRadius: 16,
+    border: '1px solid #e5e7eb', padding: '0 16px',
+    fontSize: 14, color: '#111827', outline: 'none',
+    background: 'white', boxSizing: 'border-box',
+  }
+
   return (
-    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
-      <Back onClick={() => navigate(-1)} />
+    <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1 text-center">Welcome Back</h1>
-      <p className="text-sm text-gray-500 mb-8 text-center">Log in to continue using OWA.</p>
+      {/* Back button — top left, close to edge */}
+      <div style={{ padding: '56px 24px 0' }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{ width: 40, height: 40, borderRadius: 12, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col flex-1">
-        <div className="flex flex-col gap-5">
-          {/* Phone */}
-          <div>
-            <FieldLabel icon={phoneIcon} text="Phone number" />
-            <div className={`flex h-14 rounded-2xl border overflow-hidden bg-white focus-within:border-[#1A6BFF] transition-colors ${errors.phone ? 'border-red-400' : 'border-gray-200'}`}>
-              <button type="button" className="flex items-center gap-1.5 px-4 border-r border-gray-200 text-sm font-medium text-gray-800 shrink-0">
-                +234
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Enter your phone number" className="flex-1 px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-transparent" />
+      {/* Main content — 40px side padding so nothing touches the edge */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '48px 32px 40px' }}>
+
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>
+          Welcome Back
+        </h1>
+        <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 40 }}>
+          Log in to continue using OWA.
+        </p>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* Phone */}
+            <div>
+              <Label icon={phoneIcon} text="Phone number" />
+              <div style={{
+                display: 'flex', height: 56, borderRadius: 16, overflow: 'hidden',
+                border: `1px solid ${errors.phone ? '#f87171' : '#e5e7eb'}`,
+                background: 'white',
+              }}>
+                <button type="button" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 16px', borderRight: '1px solid #e5e7eb', fontSize: 14, fontWeight: 500, color: '#1f2937', whiteSpace: 'nowrap', background: 'transparent', border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer' }}>
+                  +234
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={e => setForm({ ...form, phone: e.target.value })}
+                  placeholder="Enter your phone number"
+                  style={{ flex: 1, padding: '0 16px', fontSize: 14, color: '#111827', outline: 'none', background: 'transparent', border: 'none' }}
+                />
+              </div>
+              {errors.phone && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.phone}</p>}
             </div>
-            {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+
+            {/* Password */}
+            <div>
+              <Label icon={lockIcon} text="Password" />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPwd ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={e => setForm({ ...form, password: e.target.value })}
+                  placeholder="Enter your password"
+                  style={{ ...inputStyle, paddingRight: 48, border: `1px solid ${errors.password ? '#f87171' : '#e5e7eb'}` }}
+                />
+                <button type="button" onClick={() => setShowPwd(v => !v)} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                  <EyeIcon open={showPwd} />
+                </button>
+              </div>
+              {errors.password && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.password}</p>}
+            </div>
+
+            <p onClick={() => navigate('/reset-password')} style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', cursor: 'pointer' }}>
+              Forgot Password?
+            </p>
           </div>
 
-          {/* Password */}
-          <div>
-            <FieldLabel icon={lockIcon} text="Password" />
-            <div className="relative">
-              <input
-                type={showPwd ? 'text' : 'password'}
-                value={form.password}
-                onChange={e => setForm({ ...form, password: e.target.value })}
-                placeholder="Enter your password"
-                className={`${inputCls} pr-12 ${errors.password ? 'border-red-400!' : ''}`}
-              />
-              <button type="button" onClick={() => setShowPwd(v => !v)} className="absolute right-4 top-1/2 -translate-y-1/2">
-                <EyeIcon open={showPwd} />
-              </button>
-            </div>
-            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+          {/* Bottom buttons */}
+          <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <button
+              type="submit"
+              style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
+            >
+              Login
+            </button>
+            <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
+              Don't have an account?{' '}
+              <span onClick={() => navigate('/role')} style={{ color: '#1A6BFF', fontWeight: 600, cursor: 'pointer' }}>Sign Up</span>
+            </p>
           </div>
-
-          <p onClick={() => navigate('/reset-password')} className="text-[0.85rem] font-bold text-gray-900 cursor-pointer text-center">
-            Forgot Password?
-          </p>
-        </div>
-
-        <div className="mt-auto pt-8 flex flex-col gap-4">
-          <button type="submit" className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none">
-            Login
-          </button>
-          <p className="text-center text-sm text-gray-500">
-            Don't have an account?{' '}
-            <span onClick={() => navigate('/role')} className="text-[#1A6BFF] font-semibold cursor-pointer">Sign Up</span>
-          </p>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   )
 }

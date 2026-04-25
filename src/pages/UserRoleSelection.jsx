@@ -5,69 +5,61 @@ export default function UserRoleSelection() {
   const [selected, setSelected] = useState('passenger')
   const navigate = useNavigate()
 
+  const passengerIcon = (active) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  )
+  const driverIcon = (active) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+    </svg>
+  )
+
   return (
-    <div className="w-full bg-white flex flex-col items-center justify-center px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Plain arrow back — no background box */}
-      <button
-        onClick={() => navigate(-1)}
-        className="w-8 h-8 flex items-center justify-center mb-14 self-start shrink-0 active:scale-[0.95] transition-transform"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-      </button>
-
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-4 text-center w-full">
-        Are you a passenger or a driver?
-      </h1>
-      <p className="text-sm text-gray-400 mb-12 text-center w-full">You can change the mode later</p>
-
-      {/* Role cards */}
-      <div className="grid grid-cols-2 gap-10 w-full mb-2">
-        {[
-          {
-            id: 'passenger',
-            label: 'Passenger',
-            icon: (active) => (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
-            ),
-          },
-          {
-            id: 'driver',
-            label: 'Driver',
-            icon: (active) => (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-              </svg>
-            ),
-          },
-        ].map(({ id, label, icon }) => {
-          const active = selected === id
-          return (
-            <button
-              key={id}
-              onClick={() => setSelected(id)}
-              className={`flex flex-col items-center justify-center gap-3 py-8 rounded-2xl border-2 transition-all active:scale-[0.97] shadow-none ${active ? 'border-[#1A6BFF]' : 'border-gray-200'}`}
-            >
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${active ? 'bg-blue-50' : 'bg-gray-100'}`}>
-                {icon(active)}
-              </div>
-              <span className={`text-sm font-semibold ${active ? 'text-[#1A6BFF]' : 'text-gray-500'}`}>{label}</span>
-            </button>
-          )
-        })}
+      <div style={{ padding: '56px 24px 0' }}>
+        <button onClick={() => navigate(-1)} style={{ width: 40, height: 40, borderRadius: 12, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
       </div>
 
-      <div className="pt-16 w-full">
-        <button
-          onClick={() => navigate('/signup', { state: { role: selected } })}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none"
-        >
-          Continue
-        </button>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '48px 32px 40px' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>Are you a passenger or a driver?</h1>
+        <p style={{ fontSize: 14, color: '#9ca3af', marginBottom: 48 }}>You can change the mode later</p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 8 }}>
+          {[
+            { id: 'passenger', label: 'Passenger', icon: passengerIcon },
+            { id: 'driver', label: 'Driver', icon: driverIcon },
+          ].map(({ id, label, icon }) => {
+            const active = selected === id
+            return (
+              <button
+                key={id}
+                onClick={() => setSelected(id)}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: 12, padding: '32px 16px', borderRadius: 16,
+                  border: `2px solid ${active ? '#1A6BFF' : '#e5e7eb'}`,
+                  background: 'white', cursor: 'pointer',
+                }}
+              >
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: active ? '#eff6ff' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {icon(active)}
+                </div>
+                <span style={{ fontSize: 14, fontWeight: 600, color: active ? '#1A6BFF' : '#6b7280' }}>{label}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div style={{ marginTop: 'auto', paddingTop: 48 }}>
+          <button onClick={() => navigate('/signup', { state: { role: selected } })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   )

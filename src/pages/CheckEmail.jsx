@@ -4,50 +4,38 @@ export default function CheckEmail() {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white flex flex-col items-center px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
+    <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column', padding: '56px 32px 40px', alignItems: 'center' }}>
 
-      {/* Illustration */}
-      <div className="flex flex-col items-center mb-8 mt-8">
-        <div className="w-24 h-24 rounded-3xl bg-gray-100 flex items-center justify-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-[#1A6BFF] flex items-center justify-center relative">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        {/* Icon */}
+        <div style={{ width: 96, height: 96, borderRadius: 24, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
+          <div style={{ width: 56, height: 56, borderRadius: 16, background: '#1A6BFF', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
               <polyline points="22,6 12,13 2,6"/>
             </svg>
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#60a5fa] border-2 border-white" />
+            <span style={{ position: 'absolute', top: -6, right: -6, width: 16, height: 16, borderRadius: '50%', background: '#60a5fa', border: '2px solid white' }} />
           </div>
         </div>
 
-        <h1 className="text-[1.6rem] font-bold text-gray-900 mb-3 text-center">Check your email</h1>
-        <p className="text-sm text-gray-500 text-center leading-relaxed">
+        <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#111827', textAlign: 'center', marginBottom: 12 }}>Check your email</h1>
+        <p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', lineHeight: 1.6 }}>
           We have sent a password recovery key to your email
         </p>
       </div>
 
-      <div className="w-full flex flex-col gap-3 mt-2">
-        <button
-          onClick={() => navigate('/create-password')}
-          className="w-full h-14 rounded-2xl bg-[#1A6BFF] text-white font-semibold text-base active:scale-[0.98] active:brightness-90 transition-all shadow-none"
-        >
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <button onClick={() => navigate('/create-password')} style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
           Open email app
         </button>
-        <button
-          onClick={() => navigate('/login')}
-          className="w-full h-14 rounded-2xl text-gray-600 font-semibold text-base shadow-none"
-        >
+        <button onClick={() => navigate('/login')} style={{ width: '100%', height: 56, borderRadius: 999, background: 'transparent', color: '#4b5563', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
           Skip, I'll confirm later
         </button>
       </div>
 
-      <p className="mt-auto pt-10 text-center text-xs text-gray-400 leading-relaxed">
-        Didn't receive the email? Check your spam folder,{' '}
-        <br />or{' '}
-        <span
-          onClick={() => navigate('/login')}
-          className="text-[#1A6BFF] cursor-pointer"
-        >
-          try using your phone number
-        </span>
+      <p style={{ marginTop: 24, textAlign: 'center', fontSize: 12, color: '#9ca3af', lineHeight: 1.6 }}>
+        Didn't receive the email? Check your spam folder, or{' '}
+        <span onClick={() => navigate('/login')} style={{ color: '#1A6BFF', cursor: 'pointer' }}>try using your phone number</span>
       </p>
     </div>
   )

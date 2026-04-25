@@ -1,14 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-const Back = ({ onClick }) => (
-  <button onClick={onClick} className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-6 shrink-0">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  </button>
-)
-
 export default function OTPVerification() {
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -18,7 +10,6 @@ export default function OTPVerification() {
   const [verifying, setVerifying] = useState(false)
   const [countdown, setCountdown] = useState(59)
   const refs = [useRef(), useRef(), useRef(), useRef()]
-
   const filled = digits.every(d => d !== '')
 
   useEffect(() => {
@@ -29,9 +20,7 @@ export default function OTPVerification() {
 
   const handleChange = (i, val) => {
     if (!/^\d?$/.test(val)) return
-    const next = [...digits]
-    next[i] = val
-    setDigits(next)
+    const next = [...digits]; next[i] = val; setDigits(next)
     if (val && i < 3) refs[i + 1].current?.focus()
   }
 
@@ -52,55 +41,40 @@ export default function OTPVerification() {
     }
   }, [digits])
 
-  const handleResend = () => {
-    setCountdown(59)
-    setDigits(['', '', '', ''])
-    refs[0].current?.focus()
-  }
-
   return (
-    <div className="w-full bg-white flex flex-col px-7 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
-      <Back onClick={() => navigate(-1)} />
+    <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
 
-      <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1 text-center">Enter the code</h1>
-      <p className="text-sm text-gray-500 mb-10 text-center">OWA sent your code via Whatsapp to +2347011286879</p>
-
-      {/* OTP boxes */}
-      <div className="flex gap-3">
-        {digits.map((d, i) => (
-          <input
-            key={i}
-            ref={refs[i]}
-            type="tel"
-            inputMode="numeric"
-            maxLength={1}
-            value={d}
-            onChange={e => handleChange(i, e.target.value)}
-            onKeyDown={e => handleKeyDown(i, e)}
-            className="flex-1 h-17 rounded-2xl border border-gray-200 text-center text-[1.6rem] font-bold text-gray-900 outline-none focus:border-[#1A6BFF] bg-white transition-colors"
-          />
-        ))}
+      <div style={{ padding: '56px 24px 0' }}>
+        <button onClick={() => navigate(-1)} style={{ width: 40, height: 40, borderRadius: 12, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
       </div>
 
-      <div className="mt-auto pt-8 flex flex-col gap-3">
-        <button
-          onClick={handleVerify}
-          disabled={verifying}
-          className={`w-full h-14 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] active:brightness-90 shadow-none ${filled ? 'bg-[#1A6BFF] text-white' : 'bg-blue-300 text-white'}`}
-        >
-          {verifying
-            ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></>
-            : 'Verify Code'}
-        </button>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '48px 32px 40px' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>Enter the code</h1>
+        <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 40 }}>OWA sent your code via Whatsapp to +2347011286879</p>
 
-        {countdown > 0
-          ? <p className="text-center text-sm text-gray-500">
-              Resend code{' '}
-              <span className="text-[#1A6BFF] font-semibold">0:{String(countdown).padStart(2, '0')}s</span>
-            </p>
-          : <button onClick={handleResend} className="w-full h-14 rounded-2xl bg-blue-300 text-white font-semibold text-base shadow-none">
-              Resend Code
-            </button>}
+        <div style={{ display: 'flex', gap: 12 }}>
+          {digits.map((d, i) => (
+            <input
+              key={i} ref={refs[i]}
+              type="tel" inputMode="numeric" maxLength={1} value={d}
+              onChange={e => handleChange(i, e.target.value)}
+              onKeyDown={e => handleKeyDown(i, e)}
+              style={{ flex: 1, height: 64, borderRadius: 16, border: `1px solid ${d ? '#1A6BFF' : '#e5e7eb'}`, textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#111827', outline: 'none', background: 'white', boxSizing: 'border-box' }}
+            />
+          ))}
+        </div>
+
+        <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <button onClick={handleVerify} disabled={verifying} style={{ width: '100%', height: 56, borderRadius: 999, background: filled ? '#1A6BFF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {verifying ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Verify Code'}
+          </button>
+          {countdown > 0
+            ? <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>Resend code <span style={{ color: '#1A6BFF', fontWeight: 600 }}>0:{String(countdown).padStart(2, '0')}s</span></p>
+            : <button onClick={() => { setCountdown(59); setDigits(['','','','']); refs[0].current?.focus() }} style={{ width: '100%', height: 56, borderRadius: 999, background: '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>Resend Code</button>
+          }
+        </div>
       </div>
     </div>
   )
