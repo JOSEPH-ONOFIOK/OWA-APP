@@ -7,6 +7,7 @@ import OTPVerification from './pages/OTPVerification'
 import UserRoleSelection from './pages/UserRoleSelection'
 import DriverInfo from './pages/DriverInfo'
 import StudentInfo from './pages/StudentInfo'
+import StudentDashboard from './pages/StudentDashboard'
 import BankSetup from './pages/BankSetup'
 import ResetPassword from './pages/ResetPassword'
 import CheckEmail from './pages/CheckEmail'
@@ -15,7 +16,7 @@ import WelcomeLoading from './pages/WelcomeLoading'
 import logoMark from './assets/images/Full Logo Mark 1 1.png'
 import heroBg from './assets/images/Rectangle 1 (4).png'
 
-const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back']
+const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard']
 
 function Layout({ children }) {
   const { pathname } = useLocation()
@@ -85,6 +86,7 @@ function App() {
           <Route path="/role" element={<UserRoleSelection />} />
           <Route path="/driver-info" element={<DriverInfo />} />
           <Route path="/student-info" element={<StudentInfo />} />
+          <Route path="/dashboard" element={<StudentDashboard />} />
           <Route path="/bank-setup" element={<BankSetup />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/check-email" element={<CheckEmail />} />

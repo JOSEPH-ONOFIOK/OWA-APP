@@ -31,7 +31,7 @@ export default function Login() {
 
   const handleSubmit = (ev) => {
     ev.preventDefault()
-    if (validate()) navigate('/welcome-back')
+    if (validate()) navigate('/dashboard')
   }
 
   const inputStyle = {
