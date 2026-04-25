@@ -59,8 +59,7 @@ export default function Onboarding() {
 
   return (
     <div
-      className="relative w-full overflow-hidden bg-black"
-      style={{ height: '100dvh' }}
+      className="fixed inset-0 overflow-hidden bg-black"
       onTouchStart={handleTouchStart}
     >
       {/* Full-screen background photo */}

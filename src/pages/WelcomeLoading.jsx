@@ -25,7 +25,7 @@ export default function WelcomeLoading() {
   /* ── Returning user: blue screen ── */
   if (isReturning) {
     return (
-      <div className="w-full bg-[#1A6BFF] flex flex-col" style={{ height: '100dvh' }}>
+      <div className="fixed inset-0 bg-[#1A6BFF] flex flex-col">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center text-white px-8">
             <p className="text-xl font-normal opacity-80 mb-1">OWA Says</p>
@@ -41,7 +41,7 @@ export default function WelcomeLoading() {
 
   /* ── New user: white riders community screen ── */
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-14 pb-10" style={{ height: '100dvh' }}>
+    <div className="fixed inset-0 bg-white flex flex-col px-6 pt-14 pb-10">
       <p className="text-gray-400 text-base mb-0.5">Welcome to</p>
       <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-8">
         OWA Riders community

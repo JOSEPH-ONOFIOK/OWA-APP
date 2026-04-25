@@ -11,7 +11,7 @@ export default function SplashScreen() {
   }, [navigate])
 
   return (
-    <div className="flex items-center justify-center w-full bg-[#0057FF]" style={{ height: '100dvh' }}>
+    <div className="fixed inset-0 flex items-center justify-center bg-[#0057FF]">
       <img src={logoMark} alt="OWA" className="w-56 h-auto" />
     </div>
   )
