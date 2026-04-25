@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp'
 import OTPVerification from './pages/OTPVerification'
 import UserRoleSelection from './pages/UserRoleSelection'
 import DriverInfo from './pages/DriverInfo'
+import StudentInfo from './pages/StudentInfo'
 import BankSetup from './pages/BankSetup'
 import ResetPassword from './pages/ResetPassword'
 import CheckEmail from './pages/CheckEmail'
@@ -83,6 +84,7 @@ function App() {
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/role" element={<UserRoleSelection />} />
           <Route path="/driver-info" element={<DriverInfo />} />
+          <Route path="/student-info" element={<StudentInfo />} />
           <Route path="/bank-setup" element={<BankSetup />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/check-email" element={<CheckEmail />} />

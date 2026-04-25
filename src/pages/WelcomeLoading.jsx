@@ -17,7 +17,7 @@ export default function WelcomeLoading() {
   useEffect(() => {
     const dest = isReturning
       ? '/login'
-      : role === 'driver' ? '/driver-info' : '/login'
+      : role === 'driver' ? '/driver-info' : '/student-info'
     const id = setTimeout(() => navigate(dest, { state }), 2500)
     return () => clearTimeout(id)
   }, [navigate, isReturning, role, state])

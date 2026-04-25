@@ -54,14 +54,14 @@ export default function OTPVerification() {
         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>Enter the code</h1>
         <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 40 }}>OWA sent your code via Whatsapp to +2347011286879</p>
 
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           {digits.map((d, i) => (
             <input
               key={i} ref={refs[i]}
               type="tel" inputMode="numeric" maxLength={1} value={d}
               onChange={e => handleChange(i, e.target.value)}
               onKeyDown={e => handleKeyDown(i, e)}
-              style={{ flex: 1, height: 64, borderRadius: 16, border: `1px solid ${d ? '#1A6BFF' : '#e5e7eb'}`, textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#111827', outline: 'none', background: 'white', boxSizing: 'border-box' }}
+              style={{ width: '100%', height: 64, borderRadius: 16, border: `1px solid ${d ? '#1A6BFF' : '#e5e7eb'}`, textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#111827', outline: 'none', background: 'white', boxSizing: 'border-box' }}
             />
           ))}
         </div>
