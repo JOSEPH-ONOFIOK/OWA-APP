@@ -143,13 +143,6 @@ export default function Onboarding() {
         </p>
       </div>
 
-      {/* Inset border frame — sits on top of everything, non-interactive */}
-      <div
-        className="absolute inset-0 pointer-events-none rounded-4xl"
-        style={{
-          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.12), inset 0 0 40px rgba(0,0,0,0.25)',
-        }}
-      />
     </div>
   )
 }

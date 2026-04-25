@@ -6,7 +6,7 @@ export default function UserRoleSelection() {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white flex flex-col items-center justify-center px-5 pt-12 pb-10" style={{ height: '100vh' }}>
+    <div className="w-full bg-white flex flex-col items-center justify-center px-5 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
 
       {/* Plain arrow back — no background box */}
       <button
