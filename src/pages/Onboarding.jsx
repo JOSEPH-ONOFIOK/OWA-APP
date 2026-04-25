@@ -27,6 +27,16 @@ export default function Onboarding() {
   const [current, setCurrent] = useState(0)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.setAttribute('content', '#000000')
+    document.body.style.background = '#000000'
+    return () => {
+      if (meta) meta.setAttribute('content', '#ffffff')
+      document.body.style.background = ''
+    }
+  }, [])
+
   const goNext = useCallback(() => {
     setCurrent(c => (c + 1) % slides.length)
   }, [])
