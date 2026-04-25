@@ -30,7 +30,7 @@ export default function DriverInfo() {
   const canContinue = form.tag.trim() && form.vehicle.trim()
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-8 relative" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10 relative" style={{ minHeight: '100dvh' }}>
 
       {/* Header row */}
       <div className="flex items-center gap-4 mb-8">

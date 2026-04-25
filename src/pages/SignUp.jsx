@@ -51,7 +51,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-8" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
       <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-1">Create Your OWA Account</h1>

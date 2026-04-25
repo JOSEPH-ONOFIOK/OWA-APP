@@ -4,7 +4,7 @@ export default function CheckEmail() {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white flex flex-col items-center px-6 pt-16 pb-10" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col items-center px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
 
       {/* Illustration */}
       <div className="flex flex-col items-center mb-8 mt-8">

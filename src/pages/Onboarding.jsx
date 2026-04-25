@@ -66,8 +66,7 @@ export default function Onboarding() {
       <img
         src={slide.bg}
         alt=""
-        className="absolute inset-0 w-full object-cover object-top"
-        style={{ height: '100dvh' }}
+        className="absolute inset-0 w-full h-full object-cover object-top"
       />
 
       {/* Gradient: solid black at bottom fading to transparent ~75% up */}

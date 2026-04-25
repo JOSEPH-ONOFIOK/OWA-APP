@@ -43,7 +43,7 @@ export default function CreatePassword() {
     `w-full h-14 rounded-2xl border px-4 pr-12 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-white transition-colors focus:border-[#1A6BFF] ${hasErr ? 'border-red-400!' : 'border-gray-200'}`
 
   return (
-    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-8" style={{ minHeight: '100dvh' }}>
+    <div className="w-full bg-white flex flex-col px-6 pt-12 pb-10" style={{ minHeight: '100dvh' }}>
       <Back onClick={() => navigate(-1)} />
 
       <h1 className="text-[1.7rem] font-bold text-gray-900 leading-tight mb-2">Create New Account</h1>
