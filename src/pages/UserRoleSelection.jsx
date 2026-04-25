@@ -29,7 +29,7 @@ export default function UserRoleSelection() {
         {[
           {
             id: 'passenger',
-            label: 'Passenger',
+            
             icon: (active) => (
               <svg width="2
               4" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
