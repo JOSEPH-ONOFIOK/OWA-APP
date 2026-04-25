@@ -16,8 +16,10 @@ A React-based mobile-first web app for an on-demand driver/delivery service. Bui
 | `/login` | Login | Phone + password login |
 | `/check-email` | CheckEmail | Password reset email prompt |
 | `/reset-password` | ResetPassword | Set new password |
-| `/driver-info` | DriverInfo | Driver profile setup |
+| `/driver-info` | DriverInfo | Driver profile + photo setup |
 | `/bank-setup` | BankSetup | Driver bank account setup |
+| `/student-info` | StudentInfo | Passenger profile photo upload |
+| `/dashboard` | StudentDashboard | Student home — balance, quick actions, transactions |
 
 ## Tech Stack
 
