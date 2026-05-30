@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const bankIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><rect x="5" y="11" width="4" height="10"/><rect x="10" y="11" width="4" height="10"/><rect x="15" y="11" width="4" height="10"/><path d="M2 11l10-7 10 7"/></svg>
@@ -49,7 +49,7 @@ export default function BankSetup() {
         </div>
 
         <div style={{ paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <button onClick={() => navigate('/welcome', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+          <button onClick={() => navigate('/welcome', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
             Save
           </button>
           <button onClick={() => navigate('/welcome', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#f3f4f6', color: '#1f2937', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
@@ -60,3 +60,4 @@ export default function BankSetup() {
     </div>
   )
 }
+

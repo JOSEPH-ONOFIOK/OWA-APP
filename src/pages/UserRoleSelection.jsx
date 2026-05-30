@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function UserRoleSelection() {
@@ -6,12 +6,12 @@ export default function UserRoleSelection() {
   const navigate = useNavigate()
 
   const passengerIcon = (active) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#0066FF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
     </svg>
   )
   const driverIcon = (active) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#1A6BFF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#0066FF' : '#9ca3af'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
     </svg>
   )
@@ -42,21 +42,21 @@ export default function UserRoleSelection() {
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: 12, padding: '32px 16px', borderRadius: 16,
-                  border: `2px solid ${active ? '#1A6BFF' : '#e5e7eb'}`,
+                  border: `2px solid ${active ? '#0066FF' : '#e5e7eb'}`,
                   background: 'white', cursor: 'pointer',
                 }}
               >
                 <div style={{ width: 48, height: 48, borderRadius: 12, background: active ? '#eff6ff' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {icon(active)}
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: active ? '#1A6BFF' : '#6b7280' }}>{label}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: active ? '#0066FF' : '#6b7280' }}>{label}</span>
               </button>
             )
           })}
         </div>
 
         <div style={{ marginTop: 'auto', paddingTop: 48 }}>
-          <button onClick={() => navigate('/signup', { state: { role: selected } })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+          <button onClick={() => navigate('/signup', { state: { role: selected } })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
             Continue
           </button>
         </div>
@@ -64,3 +64,4 @@ export default function UserRoleSelection() {
     </div>
   )
 }
+

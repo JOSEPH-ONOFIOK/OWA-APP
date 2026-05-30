@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function StudentInfo() {
@@ -24,15 +24,15 @@ export default function StudentInfo() {
           Add a profile photo so other users and drivers can recognise you easily.
         </p>
 
-        {/* Profile picture upload — centred */}
+        {/* Profile picture upload â€” centred */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, flex: 1 }}>
           <div style={{ position: 'relative' }}>
-            <div style={{ width: 120, height: 120, borderRadius: '50%', border: '2px solid #1A6BFF', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#1A6BFF" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: 120, height: 120, borderRadius: '50%', border: '2px solid #0066FF', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
             </div>
-            <button type="button" onClick={() => setSheet(true)} style={{ position: 'absolute', bottom: 4, right: 4, width: 32, height: 32, borderRadius: '50%', background: '#1A6BFF', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <button type="button" onClick={() => setSheet(true)} style={{ position: 'absolute', bottom: 4, right: 4, width: 32, height: 32, borderRadius: '50%', background: '#0066FF', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
@@ -46,7 +46,7 @@ export default function StudentInfo() {
         <div style={{ paddingTop: 40 }}>
           <button
             onClick={() => navigate('/login', { state })}
-            style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
+            style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
           >
             Continue
           </button>
@@ -80,3 +80,4 @@ export default function StudentInfo() {
     </div>
   )
 }
+

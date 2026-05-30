@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logoMark from '../assets/images/Full Logo Mark 1 1.png'
 
@@ -22,3 +22,4 @@ export default function SplashScreen() {
     </div>
   )
 }
+

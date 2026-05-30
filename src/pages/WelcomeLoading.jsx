@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const Spinner = ({ color }) => (
@@ -22,10 +22,10 @@ export default function WelcomeLoading() {
     return () => clearTimeout(id)
   }, [navigate, isReturning, role, state])
 
-  /* ── Returning user: blue screen ── */
+  /* â”€â”€ Returning user: blue screen â”€â”€ */
   if (isReturning) {
     return (
-      <div className="fixed inset-0 bg-[#1A6BFF] flex flex-col">
+      <div className="fixed inset-0 bg-[#0066FF] flex flex-col">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center text-white px-8">
             <p className="text-xl font-normal opacity-80 mb-1">OWA Says</p>
@@ -39,7 +39,7 @@ export default function WelcomeLoading() {
     )
   }
 
-  /* ── New user: white riders community screen ── */
+  /* â”€â”€ New user: white riders community screen â”€â”€ */
   return (
     <div className="fixed inset-0 bg-white flex flex-col px-6 pt-14 pb-10">
       <p className="text-gray-400 text-base mb-0.5">Welcome to</p>
@@ -50,8 +50,9 @@ export default function WelcomeLoading() {
       <div className="flex-1 bg-gray-200 rounded-3xl" />
 
       <div className="flex justify-center pt-8">
-        <Spinner color="#1A6BFF" />
+        <Spinner color="#0066FF" />
       </div>
     </div>
   )
 }
+

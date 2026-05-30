@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import slide1Bg from '../assets/images/Rectangle 1.png'
@@ -88,7 +88,7 @@ export default function Onboarding() {
         }}
       />
 
-      {/* Vignette — darkens corners and edges for a polished framed look */}
+      {/* Vignette â€” darkens corners and edges for a polished framed look */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -103,7 +103,7 @@ export default function Onboarding() {
         {/* Title */}
         <h1 className="text-white text-[1.85rem] font-bold leading-snug">
           {slide.title.before}
-          <span className="text-[#1A6BFF]">{slide.title.highlight}</span>
+          <span className="text-[#0066FF]">{slide.title.highlight}</span>
           {slide.title.after}
         </h1>
 
@@ -112,14 +112,14 @@ export default function Onboarding() {
           {slide.subtitle}
         </p>
 
-        {/* Dot indicators — centered */}
+        {/* Dot indicators â€” centered */}
         <div className="flex items-center justify-center gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => { setCurrent(i); setSwipeKey(k => k + 1) }}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? 'w-7 bg-[#1A6BFF]' : 'w-2 bg-white/35'
+                i === current ? 'w-7 bg-[#0066FF]' : 'w-2 bg-white/35'
               }`}
             />
           ))}
@@ -129,14 +129,14 @@ export default function Onboarding() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => navigate('/login')}
-            className="w-full rounded-full bg-[#1A6BFF] text-white font-semibold text-base"
+            className="w-full rounded-full bg-[#0066FF] text-white font-semibold text-base"
             style={{ height: '56px' }}
           >
             Login
           </button>
           <button
             onClick={() => navigate('/role')}
-            className="w-full rounded-full bg-white text-[#1A6BFF] font-semibold text-base"
+            className="w-full rounded-full bg-white text-[#0066FF] font-semibold text-base"
             style={{ height: '56px' }}
           >
             Sign Up
@@ -146,12 +146,13 @@ export default function Onboarding() {
         {/* Terms */}
         <p className="text-center text-xs text-white/45">
           joining our app means you agree with our{' '}
-          <span className="text-[#1A6BFF] underline cursor-pointer">Terms of Use</span>
+          <span className="text-[#0066FF] underline cursor-pointer">Terms of Use</span>
           {' '}and{' '}
-          <span className="text-[#1A6BFF] underline cursor-pointer">Privacy Policy</span>
+          <span className="text-[#0066FF] underline cursor-pointer">Privacy Policy</span>
         </p>
       </div>
 
     </div>
   )
 }
+

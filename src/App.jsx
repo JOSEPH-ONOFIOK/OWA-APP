@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+﻿import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import SplashScreen from './pages/SplashScreen'
 import Onboarding from './pages/Onboarding'
 import Login from './pages/Login'
@@ -13,10 +13,21 @@ import ResetPassword from './pages/ResetPassword'
 import CheckEmail from './pages/CheckEmail'
 import CreatePassword from './pages/CreatePassword'
 import WelcomeLoading from './pages/WelcomeLoading'
+import Transfer from './pages/Transfer'
+import SendToDriver from './pages/SendToDriver'
+import DriverDashboard from './pages/DriverDashboard'
+import PassengerProfile from './pages/PassengerProfile'
+import DriverProfile from './pages/DriverProfile'
+import AddMoney from './pages/AddMoney'
+import PaymentSuccess from './pages/PaymentSuccess'
+import TransferAmount from './pages/TransferAmount'
+import SetupPin from './pages/SetupPin'
+import EnterPin from './pages/EnterPin'
+import Receipt from './pages/Receipt'
 import logoMark from './assets/images/Full Logo Mark 1 1.png'
 import heroBg from './assets/images/Rectangle 1 (4).png'
 
-const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard']
+const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard', '/driver-dashboard', '/transfer', '/send-to-driver', '/transfer-amount', '/enter-pin', '/receipt', '/profile', '/driver-profile', '/add-money', '/payment-success', '/setup-pin']
 
 function Layout({ children }) {
   const { pathname } = useLocation()
@@ -25,7 +36,7 @@ function Layout({ children }) {
 
   return (
     <div className="flex min-h-screen bg-[#f0f4ff]">
-      {/* Brand panel — desktop only */}
+      {/* Brand panel â€” desktop only */}
       <div className="hidden lg:flex lg:w-[44%] xl:w-[40%] sticky top-0 h-screen flex-col overflow-hidden bg-[#0057FF]">
         <img
           src={heroBg}
@@ -39,15 +50,15 @@ function Layout({ children }) {
             <span className="text-blue-200">reimagined.</span>
           </h2>
           <p className="text-white/60 text-[0.95rem] leading-relaxed max-w-xs">
-            Pay drivers, track rides, and manage your wallet — all from one app.
+            Pay drivers, track rides, and manage your wallet â€” all from one app.
           </p>
 
           {/* Feature pills */}
           <div className="flex flex-col gap-3 mt-10 w-full max-w-xs">
             {[
-              { icon: '⚡', label: 'Instant payments' },
-              { icon: '🔒', label: 'Secure & transparent' },
-              { icon: '🎓', label: 'Built for campus life' },
+              { icon: 'âš¡', label: 'Instant payments' },
+              { icon: 'ðŸ”’', label: 'Secure & transparent' },
+              { icon: 'ðŸŽ“', label: 'Built for campus life' },
             ].map(({ icon, label }) => (
               <div key={label} className="flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3">
                 <span className="text-lg">{icon}</span>
@@ -57,7 +68,7 @@ function Layout({ children }) {
           </div>
         </div>
         <div className="relative z-10 pb-6 text-center text-white/25 text-xs">
-          © 2025 OWA. All rights reserved.
+          Â© 2025 OWA. All rights reserved.
         </div>
       </div>
 
@@ -93,6 +104,17 @@ function App() {
           <Route path="/create-password" element={<CreatePassword />} />
           <Route path="/welcome" element={<WelcomeLoading />} />
           <Route path="/welcome-back" element={<WelcomeLoading />} />
+          <Route path="/transfer" element={<Transfer />} />
+          <Route path="/send-to-driver" element={<SendToDriver />} />
+          <Route path="/driver-dashboard" element={<DriverDashboard />} />
+          <Route path="/profile" element={<PassengerProfile />} />
+          <Route path="/driver-profile" element={<DriverProfile />} />
+          <Route path="/add-money" element={<AddMoney />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/transfer-amount" element={<TransferAmount />} />
+          <Route path="/setup-pin" element={<SetupPin />} />
+          <Route path="/enter-pin" element={<EnterPin />} />
+          <Route path="/receipt" element={<Receipt />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
@@ -101,3 +123,4 @@ function App() {
 }
 
 export default App
+

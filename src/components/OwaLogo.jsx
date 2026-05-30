@@ -1,4 +1,4 @@
-export default function OwaLogo({ size = 48, color = '#1A6BFF' }) {
+﻿export default function OwaLogo({ size = 48, color = '#0066FF' }) {
   return (
     <svg
       width={size}
@@ -50,3 +50,4 @@ export default function OwaLogo({ size = 48, color = '#1A6BFF' }) {
     </svg>
   )
 }
+

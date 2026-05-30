@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function OTPVerification() {
@@ -61,17 +61,17 @@ export default function OTPVerification() {
               type="tel" inputMode="numeric" maxLength={1} value={d}
               onChange={e => handleChange(i, e.target.value)}
               onKeyDown={e => handleKeyDown(i, e)}
-              style={{ width: '100%', height: 64, borderRadius: 16, border: `1px solid ${d ? '#1A6BFF' : '#e5e7eb'}`, textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#111827', outline: 'none', background: 'white', boxSizing: 'border-box' }}
+              style={{ width: '100%', height: 64, borderRadius: 16, border: `1px solid ${d ? '#0066FF' : '#e5e7eb'}`, textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#111827', outline: 'none', background: 'white', boxSizing: 'border-box' }}
             />
           ))}
         </div>
 
         <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <button onClick={handleVerify} disabled={verifying} style={{ width: '100%', height: 56, borderRadius: 999, background: filled ? '#1A6BFF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <button onClick={handleVerify} disabled={verifying} style={{ width: '100%', height: 56, borderRadius: 999, background: filled ? '#0066FF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             {verifying ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Verify Code'}
           </button>
           {countdown > 0
-            ? <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>Resend code <span style={{ color: '#1A6BFF', fontWeight: 600 }}>0:{String(countdown).padStart(2, '0')}s</span></p>
+            ? <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>Resend code <span style={{ color: '#0066FF', fontWeight: 600 }}>0:{String(countdown).padStart(2, '0')}s</span></p>
             : <button onClick={() => { setCountdown(59); setDigits(['','','','']); refs[0].current?.focus() }} style={{ width: '100%', height: 56, borderRadius: 999, background: '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>Resend Code</button>
           }
         </div>
@@ -79,3 +79,4 @@ export default function OTPVerification() {
     </div>
   )
 }
+

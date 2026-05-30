@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const personIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -41,8 +41,8 @@ export default function DriverInfo() {
         {/* Profile picture */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
           <div style={{ position: 'relative' }}>
-            <div style={{ width: 88, height: 88, borderRadius: '50%', border: '2px solid #1A6BFF', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1A6BFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: 88, height: 88, borderRadius: '50%', border: '2px solid #0066FF', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
             </div>
@@ -68,7 +68,7 @@ export default function DriverInfo() {
 
         {/* Continue button */}
         <div style={{ paddingTop: 40 }}>
-          <button onClick={() => navigate('/bank-setup', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: canContinue ? '#1A6BFF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+          <button onClick={() => navigate('/bank-setup', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: canContinue ? '#0066FF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
             Continue
           </button>
         </div>
@@ -101,3 +101,4 @@ export default function DriverInfo() {
     </div>
   )
 }
+

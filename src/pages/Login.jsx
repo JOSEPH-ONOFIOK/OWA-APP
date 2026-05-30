@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const EyeIcon = ({ open }) => open
@@ -44,7 +44,7 @@ export default function Login() {
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Back button — top left, close to edge */}
+      {/* Back button â€” top left, close to edge */}
       <div style={{ padding: '56px 24px 0' }}>
         <button
           onClick={() => navigate(-1)}
@@ -56,7 +56,7 @@ export default function Login() {
         </button>
       </div>
 
-      {/* Main content — 40px side padding so nothing touches the edge */}
+      {/* Main content â€” 40px side padding so nothing touches the edge */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '48px 32px 40px' }}>
 
         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>
@@ -119,13 +119,13 @@ export default function Login() {
           <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
             <button
               type="submit"
-              style={{ width: '100%', height: 56, borderRadius: 999, background: '#1A6BFF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
+              style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
             >
               Login
             </button>
             <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
               Don't have an account?{' '}
-              <span onClick={() => navigate('/role')} style={{ color: '#1A6BFF', fontWeight: 600, cursor: 'pointer' }}>Sign Up</span>
+              <span onClick={() => navigate('/role')} style={{ color: '#0066FF', fontWeight: 600, cursor: 'pointer' }}>Sign Up</span>
             </p>
           </div>
         </form>
@@ -133,3 +133,4 @@ export default function Login() {
     </div>
   )
 }
+
