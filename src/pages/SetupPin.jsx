@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const BLUE = '#0066FF'
 
@@ -12,6 +12,8 @@ const keys = [
 
 export default function SetupPin() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const dest = state?.role === 'driver' ? '/driver-dashboard' : '/dashboard'
   const [pin, setPin] = useState([])
   const [success, setSuccess] = useState(false)
 
@@ -126,7 +128,7 @@ export default function SetupPin() {
       {success && (
         <>
           <div
-            onClick={() => { setSuccess(false); navigate('/dashboard') }}
+            onClick={() => { setSuccess(false); navigate(dest) }}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 40 }}
           />
           <div style={{
@@ -138,7 +140,7 @@ export default function SetupPin() {
             {/* Close */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
               <button
-                onClick={() => { setSuccess(false); navigate('/dashboard') }}
+                onClick={() => { setSuccess(false); navigate(dest) }}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#666', lineHeight: 1 }}
               >×</button>
             </div>
@@ -164,7 +166,7 @@ export default function SetupPin() {
 
             {/* Done */}
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate(dest)}
               style={{ width: '100%', height: 56, borderRadius: 999, background: BLUE, border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 600, color: 'white' }}
             >
               Done

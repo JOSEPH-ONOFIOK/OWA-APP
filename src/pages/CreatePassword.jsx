@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { api } from '../api'
 
 const EyeOpen = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 const EyeOff = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -7,13 +8,18 @@ const lockIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" str
 
 export default function CreatePassword() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ password: '', confirm: '' })
+  const { state } = useLocation()
+  const email = state?.email ?? ''
+  const [form, setForm] = useState({ token: '', password: '', confirm: '' })
   const [errors, setErrors] = useState({})
+  const [apiError, setApiError] = useState('')
+  const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
   const validate = () => {
     const e = {}
+    if (!form.token.trim()) e.token = 'Enter the recovery key from your email'
     if (form.password.length < 8) e.password = 'Must be at least 8 characters'
     if (form.confirm !== form.password) e.confirm = 'Both passwords must match'
     setErrors(e)
@@ -42,8 +48,31 @@ export default function CreatePassword() {
           Your new password must be different from previously used passwords.
         </p>
 
-        <form onSubmit={e => { e.preventDefault(); if (validate()) navigate('/login') }} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <form onSubmit={async e => {
+          e.preventDefault()
+          if (!validate()) return
+          setLoading(true)
+          setApiError('')
+          try {
+            await api.resetPassword({ email, token: form.token, password: form.password, confirmPassword: form.confirm })
+            navigate('/login')
+          } catch (err) {
+            setApiError(err.message)
+          } finally {
+            setLoading(false)
+          }
+        }} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* Recovery token */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                {lockIcon}
+                <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>Recovery Key</span>
+              </div>
+              <input type="text" value={form.token} onChange={e => setForm({ ...form, token: e.target.value })} placeholder="Paste the key from your email" style={inputStyle(errors.token)} />
+              {errors.token && <p style={{ fontSize: 12, marginTop: 6, color: '#ef4444' }}>{errors.token}</p>}
+            </div>
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -74,9 +103,10 @@ export default function CreatePassword() {
             </div>
           </div>
 
-          <div style={{ marginTop: 'auto', paddingTop: 40 }}>
-            <button type="submit" style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
-              Reset Password
+          <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {apiError && <p style={{ fontSize: 13, color: '#ef4444', textAlign: 'center', margin: 0 }}>{apiError}</p>}
+            <button type="submit" disabled={loading} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              {loading ? <><span>Resetting</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Reset Password'}
             </button>
           </div>
         </form>

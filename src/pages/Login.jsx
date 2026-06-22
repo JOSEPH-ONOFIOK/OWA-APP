@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api, formatPhone, saveToken, getRoleFromToken } from '../api'
 
 const EyeIcon = ({ open }) => open
   ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -19,6 +20,8 @@ export default function Login() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ phone: '', password: '' })
   const [errors, setErrors] = useState({})
+  const [apiError, setApiError] = useState('')
+  const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
 
   const validate = () => {
@@ -29,9 +32,21 @@ export default function Login() {
     return !Object.keys(e).length
   }
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault()
-    if (validate()) navigate('/dashboard')
+    if (!validate()) return
+    setLoading(true)
+    setApiError('')
+    try {
+      const { accessToken } = await api.login({ phone: formatPhone(form.phone), password: form.password })
+      saveToken(accessToken)
+      const role = getRoleFromToken(accessToken)
+      navigate(role === 'driver' ? '/driver-dashboard' : '/dashboard')
+    } catch (err) {
+      setApiError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputStyle = {
@@ -77,7 +92,7 @@ export default function Login() {
                 border: `1px solid ${errors.phone ? '#f87171' : '#e5e7eb'}`,
                 background: 'white',
               }}>
-                <button type="button" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 16px', borderRight: '1px solid #e5e7eb', fontSize: 14, fontWeight: 500, color: '#1f2937', whiteSpace: 'nowrap', background: 'transparent', border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer' }}>
+                <button type="button" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 16px', fontSize: 14, fontWeight: 500, color: '#1f2937', whiteSpace: 'nowrap', background: 'transparent', border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer' }}>
                   +234
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
@@ -117,11 +132,13 @@ export default function Login() {
 
           {/* Bottom buttons */}
           <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {apiError && <p style={{ fontSize: 13, color: '#ef4444', textAlign: 'center', margin: 0 }}>{apiError}</p>}
             <button
               type="submit"
-              style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
+              disabled={loading}
+              style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
             >
-              Login
+              {loading ? <><span>Logging in</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Login'}
             </button>
             <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
               Don't have an account?{' '}

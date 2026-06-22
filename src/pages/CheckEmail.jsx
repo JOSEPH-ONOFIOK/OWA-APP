@@ -1,7 +1,8 @@
-﻿import { useNavigate } from 'react-router-dom'
+﻿import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function CheckEmail() {
   const navigate = useNavigate()
+  const { state } = useLocation()
 
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column', padding: '56px 32px 40px', alignItems: 'center' }}>
@@ -25,7 +26,7 @@ export default function CheckEmail() {
       </div>
 
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <button onClick={() => navigate('/create-password')} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+        <button onClick={() => navigate('/create-password', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
           Open email app
         </button>
         <button onClick={() => navigate('/login')} style={{ width: '100%', height: 56, borderRadius: 999, background: 'transparent', color: '#4b5563', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api, getToken, getSavedName } from '../api'
 
 import piggyImg   from '../assets/images/figma-driver-card-piggy.png'
 import avatarYusuf from '../assets/images/figma-avatar-yusuf.png'
@@ -56,16 +57,59 @@ export default function DriverDashboard() {
   const navigate = useNavigate()
   const [showBal, setShowBal] = useState(true)
   const [activeTab, setActiveTab] = useState('home')
+  const [profile, setProfile] = useState(null)
+  const [showDetailsSheet, setShowDetailsSheet] = useState(false)
+  const [tagNumber, setTagNumber] = useState('')
+  const [picFile, setPicFile] = useState(null)
+  const [picPreview, setPicPreview] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [detailsError, setDetailsError] = useState('')
+  const fileRef = useRef()
+
+  const [walletUnavailable, setWalletUnavailable] = useState(false)
+
+  useEffect(() => {
+    api.driverProfile(getToken())
+      .then(setProfile)
+      .catch(() => setWalletUnavailable(true))
+  }, [])
+
+  const handlePicSelect = (file) => {
+    setPicFile(file)
+    setPicPreview(URL.createObjectURL(file))
+  }
+
+  const handleSaveDetails = async () => {
+    if (saving) return
+    setSaving(true)
+    setDetailsError('')
+    try {
+      const fd = new FormData()
+      if (picFile) fd.append('profilePicture', picFile)
+      if (tagNumber.trim()) fd.append('driverTagNumber', tagNumber.trim())
+      await api.driverDetails(fd, getToken())
+      setShowDetailsSheet(false)
+    } catch (err) {
+      setDetailsError(err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div style={{ minHeight: '100dvh', background: '#F5F5F5', display: 'flex', flexDirection: 'column', paddingBottom: 80 }}>
 
       {/* HEADER */}
       <div style={{ background: 'white', padding: '52px 20px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <img src={avatarYusuf} alt="Yusuf" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        <div onClick={() => setShowDetailsSheet(true)} style={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+          <img src={picPreview || avatarYusuf} alt="" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+          <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderRadius: '50%', background: BLUE, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+        </div>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 14, color: '#666', margin: 0 }}>Welcome Back</p>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>Yusuf Toheeb</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Driver')}</p>
         </div>
         <button style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292D32" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -95,7 +139,7 @@ export default function DriverDashboard() {
           {/* Balance — white */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18, position: 'relative', zIndex: 1 }}>
             <span style={{ fontSize: 30, fontWeight: 700, color: 'white', letterSpacing: -0.5 }}>
-              {showBal ? '₦12,200' : '₦• • • •'}
+              {walletUnavailable ? '—' : showBal ? `₦${(profile?.wallet?.balance ?? 0).toLocaleString()}` : '₦• • • •'}
             </span>
             <button onClick={() => setShowBal(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -170,6 +214,56 @@ export default function DriverDashboard() {
           </div>
         </div>
       </div>
+
+      {/* DRIVER DETAILS BOTTOM SHEET */}
+      {showDetailsSheet && (
+        <>
+          <div onClick={() => setShowDetailsSheet(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 40 }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, maxWidth: 480, margin: '0 auto', background: 'white', borderRadius: '24px 24px 0 0', zIndex: 50, padding: '20px 24px 40px' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+              <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: 0 }}>Update Profile</p>
+              <button onClick={() => setShowDetailsSheet(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+
+            {/* Profile picture */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+              <div style={{ position: 'relative', marginBottom: 10 }}>
+                <img src={picPreview || avatarYusuf} alt="" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }} />
+                <label style={{ position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: '50%', background: BLUE, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => e.target.files[0] && handlePicSelect(e.target.files[0])} />
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </label>
+              </div>
+              <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>Tap to change photo</p>
+            </div>
+
+            {/* Tag number */}
+            <div style={{ marginBottom: 24 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>Driver Tag Number</p>
+              <input
+                type="text"
+                value={tagNumber}
+                onChange={e => setTagNumber(e.target.value)}
+                placeholder="e.g. 123456"
+                style={{ width: '100%', height: 52, borderRadius: 14, border: '1px solid #e5e7eb', padding: '0 16px', fontSize: 14, color: '#111', outline: 'none', background: 'white', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            {detailsError && <p style={{ fontSize: 13, color: '#ef4444', textAlign: 'center', margin: '0 0 12px' }}>{detailsError}</p>}
+
+            <button
+              onClick={handleSaveDetails}
+              disabled={saving || (!picFile && !tagNumber.trim())}
+              style={{ width: '100%', height: 52, borderRadius: 999, background: saving || (!picFile && !tagNumber.trim()) ? '#93c5fd' : BLUE, color: 'white', fontWeight: 600, fontSize: 15, border: 'none', cursor: saving || (!picFile && !tagNumber.trim()) ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+            >
+              {saving ? <><span>Saving</span><svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Save Changes'}
+            </button>
+          </div>
+        </>
+      )}
 
       {/* BOTTOM NAV */}
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, maxWidth: 480, margin: '0 auto', background: 'white', borderTop: '1px solid #F0F0F0', display: 'flex', padding: '10px 0 20px', zIndex: 100 }}>

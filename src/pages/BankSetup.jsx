@@ -1,7 +1,25 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { api, getToken } from '../api'
 
-const bankIcon = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><rect x="5" y="11" width="4" height="10"/><rect x="10" y="11" width="4" height="10"/><rect x="15" y="11" width="4" height="10"/><path d="M2 11l10-7 10 7"/></svg>
+const BANKS = [
+  { name: 'Access Bank',        code: '044' },
+  { name: 'First Bank',         code: '011' },
+  { name: 'GTBank',             code: '058' },
+  { name: 'Zenith Bank',        code: '057' },
+  { name: 'UBA',                code: '033' },
+  { name: 'Fidelity Bank',      code: '070' },
+  { name: 'Sterling Bank',      code: '232' },
+  { name: 'Union Bank',         code: '032' },
+  { name: 'FCMB',               code: '214' },
+  { name: 'Stanbic IBTC',       code: '221' },
+  { name: 'Wema Bank',          code: '035' },
+  { name: 'Polaris Bank',       code: '076' },
+  { name: 'OPay',               code: '999992' },
+  { name: 'Palmpay',            code: '999991' },
+  { name: 'Kuda Bank',          code: '50211' },
+  { name: 'Moniepoint',         code: '50515' },
+]
 
 const inputStyle = {
   width: '100%', height: 56, borderRadius: 16,
@@ -10,17 +28,34 @@ const inputStyle = {
   background: 'white', boxSizing: 'border-box',
 }
 
-const Label = ({ icon, text }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-    {icon}
-    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>{text}</span>
-  </div>
-)
-
 export default function BankSetup() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const [form, setForm] = useState({ bank: '', account: '' })
+  const [selectedBank, setSelectedBank] = useState(null)
+  const [accountNumber, setAccountNumber] = useState('')
+  const [dropOpen, setDropOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const canSave = selectedBank && accountNumber.length === 10
+
+  const handleSave = async () => {
+    if (!canSave || loading) return
+    setLoading(true)
+    setError('')
+    try {
+      await api.driverBank({
+        bankName: selectedBank.name,
+        accountNumber,
+        bankCode: selectedBank.code,
+      }, getToken())
+      navigate('/setup-pin', { state })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
@@ -38,21 +73,48 @@ export default function BankSetup() {
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: 1 }}>
-          <div>
-            <Label icon={bankIcon} text="Bank Name" />
-            <input type="text" value={form.bank} onChange={e => setForm({ ...form, bank: e.target.value })} placeholder="Enter your bank name" style={inputStyle} />
+
+          {/* Bank dropdown */}
+          <div style={{ position: 'relative' }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>Bank Name</p>
+            <button
+              onClick={() => setDropOpen(v => !v)}
+              style={{ ...inputStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', color: selectedBank ? '#111827' : '#9ca3af', height: 56 }}
+            >
+              <span>{selectedBank ? selectedBank.name : 'Select your bank'}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            {dropOpen && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 16, border: '1px solid #e5e7eb', overflow: 'hidden auto', zIndex: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', maxHeight: 260 }}>
+                {BANKS.map(b => (
+                  <button key={b.code} onClick={() => { setSelectedBank(b); setDropOpen(false) }} style={{ width: '100%', padding: '14px 20px', background: selectedBank?.code === b.code ? '#eff6ff' : 'white', border: 'none', borderBottom: '1px solid #f3f4f6', cursor: 'pointer', textAlign: 'left', fontSize: 14, fontWeight: selectedBank?.code === b.code ? 600 : 400, color: selectedBank?.code === b.code ? '#0066FF' : '#374151' }}>
+                    {b.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Account number */}
           <div>
-            <Label icon={bankIcon} text="Account Number" />
-            <input type="tel" value={form.account} onChange={e => setForm({ ...form, account: e.target.value })} placeholder="Enter your 10 digit number" maxLength={10} style={inputStyle} />
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>Account Number</p>
+            <input
+              type="tel"
+              value={accountNumber}
+              onChange={e => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              placeholder="Enter your 10-digit account number"
+              maxLength={10}
+              style={inputStyle}
+            />
           </div>
         </div>
 
         <div style={{ paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <button onClick={() => navigate('/welcome', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
-            Save
+          {error && <p style={{ fontSize: 13, color: '#ef4444', textAlign: 'center', margin: 0 }}>{error}</p>}
+          <button onClick={handleSave} disabled={loading} style={{ width: '100%', height: 56, borderRadius: 999, background: canSave ? '#0066FF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: canSave ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {loading ? <><span>Saving</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Save'}
           </button>
-          <button onClick={() => navigate('/welcome', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#f3f4f6', color: '#1f2937', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+          <button onClick={() => navigate('/setup-pin', { state })} style={{ width: '100%', height: 56, borderRadius: 999, background: '#f3f4f6', color: '#1f2937', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
             Skip for now
           </button>
         </div>
@@ -60,4 +122,3 @@ export default function BankSetup() {
     </div>
   )
 }
-

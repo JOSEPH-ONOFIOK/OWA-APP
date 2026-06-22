@@ -45,7 +45,7 @@ export default function StudentInfo() {
         {/* Continue button */}
         <div style={{ paddingTop: 40 }}>
           <button
-            onClick={() => navigate('/login', { state })}
+            onClick={() => navigate('/setup-pin', { state })}
             style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}
           >
             Continue

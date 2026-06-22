@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api, getToken, getSavedName } from '../api'
 
 import coin1      from '../assets/images/figma-card-coin1.png'
 import coin2      from '../assets/images/figma-card-coin2.png'
@@ -70,7 +71,15 @@ export default function StudentDashboard() {
   const [showBal, setShowBal] = useState(true)
   const [activeTab, setActiveTab] = useState('home')
   const [promoIdx, setPromoIdx] = useState(0)
+  const [profile, setProfile] = useState(null)
+  const [walletUnavailable, setWalletUnavailable] = useState(false)
   const scrollRef = useRef(null)
+
+  useEffect(() => {
+    api.userProfile(getToken())
+      .then(setProfile)
+      .catch(() => setWalletUnavailable(true))
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,7 +100,7 @@ export default function StudentDashboard() {
         <img src={avatarMe} alt="" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 15, color: '#666', margin: 0, fontWeight: 400 }}>Welcome Back</p>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>Ijandipe David</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Student')}</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button style={{ width: 38, height: 38, borderRadius: '50%', background: '#FBFBFB', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -142,7 +151,7 @@ export default function StudentDashboard() {
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
               <span style={{ fontSize: 30, fontWeight: 500, color: '#C3C3C3', letterSpacing: -0.5 }}>
-                {showBal ? '₦4,200' : '₦• • • •'}
+                {walletUnavailable ? '—' : showBal ? `₦${(profile?.wallet?.balance ?? 0).toLocaleString()}` : '₦• • • •'}
               </span>
               <button onClick={() => setShowBal(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E2E2E2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

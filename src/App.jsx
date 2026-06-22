@@ -24,10 +24,13 @@ import TransferAmount from './pages/TransferAmount'
 import SetupPin from './pages/SetupPin'
 import EnterPin from './pages/EnterPin'
 import Receipt from './pages/Receipt'
+import DriverDocuments from './pages/DriverDocuments'
+import DriverReview from './pages/DriverReview'
+import DriverSubmitted from './pages/DriverSubmitted'
 import logoMark from './assets/images/Full Logo Mark 1 1.png'
 import heroBg from './assets/images/Rectangle 1 (4).png'
 
-const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard', '/driver-dashboard', '/transfer', '/send-to-driver', '/transfer-amount', '/enter-pin', '/receipt', '/profile', '/driver-profile', '/add-money', '/payment-success', '/setup-pin']
+const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard', '/driver-dashboard', '/transfer', '/send-to-driver', '/transfer-amount', '/enter-pin', '/receipt', '/profile', '/driver-profile', '/add-money', '/payment-success', '/setup-pin', '/driver-documents', '/driver-review', '/driver-submitted']
 
 function Layout({ children }) {
   const { pathname } = useLocation()
@@ -115,6 +118,9 @@ function App() {
           <Route path="/setup-pin" element={<SetupPin />} />
           <Route path="/enter-pin" element={<EnterPin />} />
           <Route path="/receipt" element={<Receipt />} />
+          <Route path="/driver-documents" element={<DriverDocuments />} />
+          <Route path="/driver-review" element={<DriverReview />} />
+          <Route path="/driver-submitted" element={<DriverSubmitted />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>

@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { api, formatPhone, saveName } from '../api'
 
 const GreenCheck = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -38,6 +39,7 @@ export default function SignUp() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' })
   const [showPwd, setShowPwd] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const ok = {
     name: form.name.trim().length > 1,
@@ -47,11 +49,22 @@ export default function SignUp() {
   }
   const allOk = Object.values(ok).every(Boolean)
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault()
     if (!allOk) return
     setLoading(true)
-    setTimeout(() => { setLoading(false); navigate('/otp', { state: { role } }) }, 1200)
+    setError('')
+    const phone = formatPhone(form.phone)
+    try {
+      const fn = role === 'driver' ? api.registerDriver : api.registerStudent
+      await fn({ fullName: form.name, email: form.email, phone, password: form.password })
+      saveName(form.name)
+      navigate('/otp', { state: { role, phone, email: form.email } })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -122,6 +135,7 @@ export default function SignUp() {
           </div>
 
           <div style={{ marginTop: 'auto', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {error && <p style={{ fontSize: 13, color: '#ef4444', textAlign: 'center', margin: 0 }}>{error}</p>}
             <button type="submit" disabled={loading} style={{ width: '100%', height: 56, borderRadius: 999, background: allOk ? '#0066FF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               {loading ? <><span>Create Account</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Create Account'}
             </button>
