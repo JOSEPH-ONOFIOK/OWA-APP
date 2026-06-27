@@ -91,7 +91,7 @@ export default function PassengerProfile() {
       }}>
         <img src={avatarMe} alt="" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)' }} />
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{profile?.fullName ?? getSavedName() || 'Student'}</p>
+          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{(profile?.fullName ?? getSavedName()) || 'Student'}</p>
           <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', margin: 0 }}>{profile?.phone ?? '—'}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgb(87,255,106)', borderRadius: 999, padding: '5px 14px' }}>
