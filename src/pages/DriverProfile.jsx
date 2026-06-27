@@ -94,7 +94,7 @@ export default function DriverProfile() {
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{profile?.fullName ?? getSavedName() || 'Driver'}</p>
+          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{(profile?.fullName ?? getSavedName()) || 'Driver'}</p>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0 }}>Tag No. : {profile?.driverTagNumber ?? '—'}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgb(87,255,106)', borderRadius: 999, padding: '5px 14px' }}>
