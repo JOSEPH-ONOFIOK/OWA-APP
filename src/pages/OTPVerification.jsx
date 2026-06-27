@@ -2,6 +2,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { api, saveToken, getRoleFromToken } from '../api'
 
+
 export default function OTPVerification() {
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -13,8 +14,14 @@ export default function OTPVerification() {
   const [verifying, setVerifying] = useState(false)
   const [error, setError] = useState('')
   const [countdown, setCountdown] = useState(59)
+  const [resending, setResending] = useState(false)
+  const [resendMsg, setResendMsg] = useState('')
   const refs = [useRef(), useRef(), useRef(), useRef()]
   const filled = digits.every(d => d !== '')
+
+  useEffect(() => {
+    if (email) api.resendOtp({ email }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (countdown <= 0) return
@@ -49,6 +56,24 @@ export default function OTPVerification() {
 
   const handleVerify = () => { if (filled) doVerify(digits.join('')) }
 
+  const handleResend = async () => {
+    if (resending) return
+    setResending(true)
+    setResendMsg('')
+    setError('')
+    try {
+      await api.resendOtp({ email })
+      setCountdown(59)
+      setDigits(['', '', '', ''])
+      setResendMsg('Code sent! Check your inbox and spam folder.')
+      refs[0].current?.focus()
+    } catch (err) {
+      setResendMsg(err.message || 'Failed to resend. Try again.')
+    } finally {
+      setResending(false)
+    }
+  }
+
   useEffect(() => {
     if (digits.every(d => d !== '') && !verifying) doVerify(digits.join(''))
   }, [digits])
@@ -64,7 +89,12 @@ export default function OTPVerification() {
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '48px 32px 40px' }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#111827', lineHeight: 1.3, marginBottom: 8 }}>Enter the code</h1>
-        <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 40 }}>OWA sent your code to <strong>{email || 'your email'}</strong></p>
+        <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 4 }}>
+          OWA sent a verification code to <strong>{email || 'your email'}</strong>.
+        </p>
+        <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 40 }}>
+          Can't find it? Check your <strong>spam / junk</strong> folder.
+        </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           {digits.map((d, i) => (
@@ -83,9 +113,22 @@ export default function OTPVerification() {
           <button onClick={handleVerify} disabled={verifying} style={{ width: '100%', height: 56, borderRadius: 999, background: filled ? '#0066FF' : '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             {verifying ? <><span>Verifying</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Verify Code'}
           </button>
+          {resendMsg && (
+            <p style={{ fontSize: 13, textAlign: 'center', margin: 0, color: resendMsg.startsWith('Code sent') ? '#16a34a' : '#ef4444' }}>
+              {resendMsg}
+            </p>
+          )}
           {countdown > 0
-            ? <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>Resend code <span style={{ color: '#0066FF', fontWeight: 600 }}>0:{String(countdown).padStart(2, '0')}s</span></p>
-            : <button onClick={() => { setCountdown(59); setDigits(['','','','']); refs[0].current?.focus() }} style={{ width: '100%', height: 56, borderRadius: 999, background: '#93c5fd', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>Resend Code</button>
+            ? <p style={{ textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
+                Resend code in <span style={{ color: '#0066FF', fontWeight: 600 }}>0:{String(countdown).padStart(2, '0')}s</span>
+              </p>
+            : <button
+                onClick={handleResend}
+                disabled={resending}
+                style={{ width: '100%', height: 56, borderRadius: 999, background: '#0066FF', color: 'white', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              >
+                {resending ? <><span>Sending…</span><svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10" strokeOpacity=".25"/><path d="M12 2a10 10 0 0110 10"/></svg></> : 'Resend Code'}
+              </button>
           }
         </div>
       </div>

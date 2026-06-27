@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api, getToken, getSavedName, logout } from '../api'
 import avatarYusuf from '../assets/images/figma-avatar-yusuf.png'
 
 const BLUE = '#0066FF'
@@ -46,6 +48,13 @@ const BankIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="non
 
 export default function DriverProfile() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState(null)
+
+  useEffect(() => {
+    api.driverProfile(getToken()).then(setProfile).catch(() => {})
+  }, [])
+
+  const handleLogout = () => { logout(); navigate('/login') }
 
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column', paddingBottom: 80 }}>
@@ -81,15 +90,15 @@ export default function DriverProfile() {
           <img src={avatarYusuf} alt="" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)' }} />
           {/* Bus Driver badge */}
           <div style={{ position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 999, padding: '2px 10px', whiteSpace: 'nowrap' }}>
-            <span style={{ fontSize: 10, fontWeight: 500, color: DARK }}>Bus Driver</span>
+            <span style={{ fontSize: 10, fontWeight: 500, color: DARK }}>{profile?.vehicleType ?? 'Driver'}</span>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>Yusuf Toheeb</p>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0 }}>Tag No. : BUS-012</p>
+          <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{profile?.fullName ?? getSavedName() || 'Driver'}</p>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0 }}>Tag No. : {profile?.driverTagNumber ?? '—'}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgb(87,255,106)', borderRadius: 999, padding: '5px 14px' }}>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>Verified by OAU</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>{profile?.verified ? 'Verified by OAU' : 'Pending Verification'}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>
           </svg>
@@ -116,19 +125,19 @@ export default function DriverProfile() {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <div>
             <p style={{ fontSize: 11, color: GRAY, margin: '0 0 2px' }}>Bank Name</p>
-            <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>Guaranty Trust Bank</p>
+            <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>{profile?.wallet?.bankName ?? '—'}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ fontSize: 11, color: GRAY, margin: '0 0 2px' }}>Account Name</p>
-            <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>Yusuf Toheeb</p>
+            <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>{profile?.wallet?.accountName ?? '—'}</p>
           </div>
         </div>
         <div style={{ marginBottom: 14 }}>
           <p style={{ fontSize: 11, color: GRAY, margin: '0 0 2px' }}>Account No.</p>
-          <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>0747112843</p>
+          <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>{profile?.wallet?.accountNumber ?? '—'}</p>
         </div>
-        <button style={{ width: '100%', height: 44, borderRadius: 10, background: 'white', border: '1.5px solid #E5E7EB', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: DARK }}>
-          Edit Account
+        <button onClick={() => navigate('/bank-setup')} style={{ width: '100%', height: 44, borderRadius: 10, background: 'white', border: '1.5px solid #E5E7EB', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: DARK }}>
+          {profile?.wallet ? 'Edit Account' : 'Add Bank Account'}
         </button>
       </div>
 
@@ -161,7 +170,7 @@ export default function DriverProfile() {
         </div>
 
         {/* LOG OUT */}
-        <button style={{ width: '100%', marginTop: 28, marginBottom: 16, height: 52, borderRadius: 14, background: 'rgb(252,239,239)', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: 'rgb(249,66,66)' }}>
+        <button onClick={handleLogout} style={{ width: '100%', marginTop: 28, marginBottom: 16, height: 52, borderRadius: 14, background: 'rgb(252,239,239)', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: 'rgb(249,66,66)' }}>
           Log Out
         </button>
       </div>

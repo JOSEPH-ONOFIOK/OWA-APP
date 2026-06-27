@@ -1,9 +1,22 @@
-const BASE = 'https://owa-api.onrender.com'
+const BASE = 'https://owa-api.vercel.app'
+const TIMEOUT_MS = 20000
+
+async function fetchWithTimeout(url, options) {
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), TIMEOUT_MS)
+  try {
+    return await fetch(url, { ...options, signal: controller.signal })
+  } catch (err) {
+    throw err.name === 'AbortError' ? new Error('Request timed out. Please try again.') : err
+  } finally {
+    clearTimeout(id)
+  }
+}
 
 async function post(path, body, token) {
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch(`${BASE}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
+  const res = await fetchWithTimeout(`${BASE}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
   const data = await res.json()
   if (!res.ok) throw new Error(data?.message || 'Something went wrong')
   return data
@@ -12,7 +25,7 @@ async function post(path, body, token) {
 async function postForm(path, formData, token) {
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch(`${BASE}${path}`, { method: 'POST', headers, body: formData })
+  const res = await fetchWithTimeout(`${BASE}${path}`, { method: 'POST', headers, body: formData })
   const data = await res.json()
   if (!res.ok) throw new Error(data?.message || 'Something went wrong')
   return data
@@ -21,7 +34,7 @@ async function postForm(path, formData, token) {
 async function get(path, token) {
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch(`${BASE}${path}`, { method: 'GET', headers })
+  const res = await fetchWithTimeout(`${BASE}${path}`, { method: 'GET', headers })
   const data = await res.json()
   if (!res.ok) throw new Error(data?.message || 'Something went wrong')
   return data
@@ -31,6 +44,7 @@ export const api = {
   registerStudent: (body)           => post('/auth/register/student', body),
   registerDriver:  (body)           => post('/auth/register/driver', body),
   verify:          (body)           => post('/auth/verify/email', body),
+  resendOtp:       (body)           => post('/auth/verify/resend', body),
   login:           (body)           => post('/auth/login', body),
   recoverPassword: (body)           => post('/auth/password/recover', body),
   resetPassword:   (body)           => post('/auth/password/reset', body),
@@ -43,10 +57,11 @@ export const api = {
 
 export const formatPhone = (local) => '+234' + local.replace(/\D/g, '').replace(/^0/, '')
 
-export const saveToken   = (t)    => localStorage.setItem('owa_token', t)
-export const getToken    = ()     => localStorage.getItem('owa_token')
-export const saveName    = (name) => localStorage.setItem('owa_name', name)
-export const getSavedName = ()    => localStorage.getItem('owa_name') ?? ''
+export const saveToken    = (t)    => localStorage.setItem('owa_token', t)
+export const getToken     = ()     => localStorage.getItem('owa_token')
+export const saveName     = (name) => localStorage.setItem('owa_name', name)
+export const getSavedName = ()     => localStorage.getItem('owa_name') ?? ''
+export const logout       = ()     => { localStorage.removeItem('owa_token'); localStorage.removeItem('owa_name') }
 
 export const getRoleFromToken = (token) => {
   try {
