@@ -111,7 +111,7 @@ export default function DriverDashboard() {
           <p style={{ fontSize: 14, color: '#666', margin: 0 }}>Welcome Back</p>
           <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Driver')}</p>
         </div>
-        <button style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button onClick={() => navigate('/notifications')} style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292D32" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
           </svg>
@@ -130,7 +130,7 @@ export default function DriverDashboard() {
             <div style={{ background: 'rgb(230,230,230)', borderRadius: 999, padding: '5px 14px' }}>
               <span style={{ fontSize: 12, color: '#333', fontWeight: 500 }}>Total Earnings</span>
             </div>
-            <button style={{ display: 'flex', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 13, fontWeight: 400 }}>
+            <button onClick={() => navigate('/transaction-history')} style={{ display: 'flex', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 13, fontWeight: 400 }}>
               Transaction History
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
@@ -152,7 +152,7 @@ export default function DriverDashboard() {
           </div>
 
           {/* Withdraw — white filled, blue text, full width */}
-          <button style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'white', border: 'none', borderRadius: 999, padding: '12px', cursor: 'pointer', color: BLUE, fontSize: 15, fontWeight: 600, width: '100%' }}>
+          <button onClick={() => navigate('/withdrawal')} style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'white', border: 'none', borderRadius: 999, padding: '12px', cursor: 'pointer', color: BLUE, fontSize: 15, fontWeight: 600, width: '100%' }}>
             Withdraw
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
@@ -196,7 +196,7 @@ export default function DriverDashboard() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <p style={{ fontSize: 17, fontWeight: 600, color: '#333', margin: 0 }}>Transactions</p>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
+            <button onClick={() => navigate('/transaction-history')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {transactions.map(tx => (
@@ -274,8 +274,9 @@ export default function DriverDashboard() {
           { id: 'profile',      label: 'Profile',      Icon: NavUser },
         ].map(({ id, label, Icon }) => {
           const active = activeTab === id
+          const dest = { earnings: '/driver-earnings', transactions: '/transaction-history', profile: '/driver-profile' }[id]
           return (
-            <button key={id} onClick={() => { setActiveTab(id); if (id === 'profile') navigate('/driver-profile') }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
+            <button key={id} onClick={() => { setActiveTab(id); if (dest) navigate(dest) }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
               <Icon active={active} />
               <span style={{ fontSize: 10, fontWeight: 500, color: active ? BLUE : '#666' }}>{label}</span>
             </button>

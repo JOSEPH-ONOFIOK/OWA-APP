@@ -21,6 +21,8 @@ export default function EnterPin() {
       setLoading(true)
       const dest = state?.type === 'addMoney'
         ? { pathname: '/payment-success', state: { type: 'addMoney', amount: state?.amount } }
+        : state?.type === 'withdrawal'
+        ? { pathname: '/payment-success', state: { type: 'withdrawal', amount: state?.amount } }
         : { pathname: '/payment-success', state: { ...state, type: 'driver', driverName: 'Yusuf' } }
       setTimeout(() => navigate(dest.pathname, { state: dest.state }), 1500)
     }

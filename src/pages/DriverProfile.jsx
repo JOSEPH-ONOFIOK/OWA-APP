@@ -20,8 +20,8 @@ const IconBox = ({ children }) => (
   </div>
 )
 
-const MenuItem = ({ icon, title, subtitle }) => (
-  <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0', borderBottom: `1px solid ${BORDER}`, textAlign: 'left' }}>
+const MenuItem = ({ icon, title, subtitle, onPress }) => (
+  <button onClick={onPress} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0', borderBottom: `1px solid ${BORDER}`, textAlign: 'left' }}>
     <IconBox>{icon}</IconBox>
     <div style={{ flex: 1 }}>
       <p style={{ fontSize: 15, fontWeight: 500, color: DARK, margin: '0 0 2px' }}>{title}</p>
@@ -153,8 +153,8 @@ export default function DriverProfile() {
 
         <SectionLabel label="Activity & Preferences" />
         <div style={{ background: 'white', borderRadius: 12 }}>
-          <MenuItem icon={<ReceiptIcon />} title="Transaction History" subtitle="View all payments" />
-          <MenuItem icon={<ChartIcon />} title="Earnings Summary" subtitle="View your earnings breakdown" />
+          <MenuItem icon={<ReceiptIcon />} title="Transaction History" subtitle="View all payments" onPress={() => navigate('/transaction-history')} />
+          <MenuItem icon={<ChartIcon />} title="Earnings Summary" subtitle="View your earnings breakdown" onPress={() => navigate('/driver-earnings')} />
         </div>
 
         <SectionLabel label="Support Section" />
@@ -183,7 +183,7 @@ export default function DriverProfile() {
           { id: 'transactions', label: 'Transactions', icon: active => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : '#666'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
           { id: 'profile', label: 'Profile', icon: active => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : '#666'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
         ].map(({ id, label, icon }) => (
-          <button key={id} onClick={() => id === 'home' && navigate('/driver-dashboard')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button key={id} onClick={() => navigate({ home: '/driver-dashboard', earnings: '/driver-earnings', transactions: '/transaction-history', profile: '/driver-profile' }[id])} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}>
             {icon(id === 'profile')}
             <span style={{ fontSize: 10, fontWeight: 500, color: id === 'profile' ? BLUE : '#666' }}>{label}</span>
           </button>

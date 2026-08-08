@@ -27,10 +27,16 @@ import Receipt from './pages/Receipt'
 import DriverDocuments from './pages/DriverDocuments'
 import DriverReview from './pages/DriverReview'
 import DriverSubmitted from './pages/DriverSubmitted'
+import Withdrawal from './pages/Withdrawal'
+import ScanQRCode from './pages/ScanQRCode'
+import Activity from './pages/Activity'
+import Notifications from './pages/Notifications'
+import TransactionHistory from './pages/TransactionHistory'
+import DriverEarnings from './pages/DriverEarnings'
 import logoMark from './assets/images/Full Logo Mark 1 1.png'
 import heroBg from './assets/images/Rectangle 1 (4).png'
 
-const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard', '/driver-dashboard', '/transfer', '/send-to-driver', '/transfer-amount', '/enter-pin', '/receipt', '/profile', '/driver-profile', '/add-money', '/payment-success', '/setup-pin', '/driver-documents', '/driver-review', '/driver-submitted']
+const FULL_BLEED = ['/', '/onboarding', '/welcome', '/welcome-back', '/dashboard', '/driver-dashboard', '/transfer', '/send-to-driver', '/transfer-amount', '/enter-pin', '/receipt', '/profile', '/driver-profile', '/add-money', '/payment-success', '/setup-pin', '/driver-documents', '/driver-review', '/driver-submitted', '/withdrawal', '/scan-qr', '/activity', '/notifications', '/transaction-history', '/driver-earnings']
 
 function Layout({ children }) {
   const { pathname } = useLocation()
@@ -121,6 +127,12 @@ function App() {
           <Route path="/driver-documents" element={<DriverDocuments />} />
           <Route path="/driver-review" element={<DriverReview />} />
           <Route path="/driver-submitted" element={<DriverSubmitted />} />
+          <Route path="/withdrawal" element={<Withdrawal />} />
+          <Route path="/scan-qr" element={<ScanQRCode />} />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/transaction-history" element={<TransactionHistory />} />
+          <Route path="/driver-earnings" element={<DriverEarnings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>

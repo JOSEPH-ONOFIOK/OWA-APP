@@ -61,7 +61,7 @@ const quickActions = [
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
   },
   {
-    label: 'Scan QR', path: '/send-to-driver',
+    label: 'Scan QR', path: '/scan-qr',
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
   },
 ]
@@ -103,12 +103,12 @@ export default function StudentDashboard() {
           <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Student')}</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button style={{ width: 38, height: 38, borderRadius: '50%', background: '#FBFBFB', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => navigate('/notifications')} style={{ width: 38, height: 38, borderRadius: '50%', background: '#FBFBFB', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292D32" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
             </svg>
           </button>
-          <button style={{ width: 38, height: 38, borderRadius: '50%', background: '#FBFBFB', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => navigate('/scan-qr')} style={{ width: 38, height: 38, borderRadius: '50%', background: '#FBFBFB', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
               <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -141,7 +141,7 @@ export default function StudentDashboard() {
               </div>
               <span style={{ color: '#111', fontSize: 11, fontWeight: 700 }}>NGN</span>
             </div>
-            <button style={{ display: 'flex', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 13, fontWeight: 400 }}>
+            <button onClick={() => navigate('/transaction-history')} style={{ display: 'flex', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 13, fontWeight: 400 }}>
               Transaction History
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
@@ -224,7 +224,7 @@ export default function StudentDashboard() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <p style={{ fontSize: 17, fontWeight: 500, color: '#333', margin: 0 }}>Transactions</p>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
+            <button onClick={() => navigate('/transaction-history')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {transactions.map(tx => (
@@ -264,8 +264,9 @@ export default function StudentDashboard() {
           },
         ].map(({ id, label, icon }) => {
           const active = activeTab === id
+          const dest = { transactions: '/transaction-history', activity: '/activity', profile: '/profile' }[id]
           return (
-            <button key={id} onClick={() => { setActiveTab(id); if (id === 'profile') navigate('/profile') }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
+            <button key={id} onClick={() => { setActiveTab(id); if (dest) navigate(dest) }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
               {icon(active)}
               <span style={{ fontSize: 11, fontWeight: 500, color: active ? BLUE : '#666' }}>{label}</span>
             </button>

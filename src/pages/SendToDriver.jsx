@@ -73,6 +73,7 @@ export default function SendToDriver() {
 
         {/* SCAN QR CODE */}
         <button
+          onClick={() => navigate('/scan-qr')}
           style={{
             width: '100%',
             height: 56,

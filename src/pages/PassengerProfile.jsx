@@ -114,8 +114,8 @@ export default function PassengerProfile() {
 
         <SectionLabel label="Activity & Preferences" />
         <div style={{ background: 'white', borderRadius: 12 }}>
-          <MenuItem icon={<ReceiptIcon />} title="Transaction History" subtitle="View all payments" />
-          <MenuItem icon={<BellIcon />} title="Notifications" subtitle="Manage alerts" />
+          <MenuItem icon={<ReceiptIcon />} title="Transaction History" subtitle="View all payments" onPress={() => navigate('/transaction-history')} />
+          <MenuItem icon={<BellIcon />} title="Notifications" subtitle="Manage alerts" onPress={() => navigate('/notifications')} />
         </div>
 
         <SectionLabel label="Support Section" />
@@ -146,7 +146,7 @@ export default function PassengerProfile() {
           { id: 'transactions', label: 'Transactions', icon: active => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : '#666'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
           { id: 'profile', label: 'Profile', icon: active => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? BLUE : '#666'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
         ].map(({ id, label, icon }) => (
-          <button key={id} onClick={() => id === 'home' && navigate('/dashboard')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button key={id} onClick={() => navigate({ home: '/dashboard', transactions: '/transaction-history', profile: '/profile' }[id])} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}>
             {icon(id === 'profile')}
             <span style={{ fontSize: 11, fontWeight: 500, color: id === 'profile' ? BLUE : '#666' }}>{label}</span>
           </button>
