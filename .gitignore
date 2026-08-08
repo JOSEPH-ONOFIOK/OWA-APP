@@ -10,6 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next
+next-env.d.ts
+public/sw.js
+public/sw.js.map
+public/swe-worker*.js
 *.local
 
 # MCP config (contains API keys)

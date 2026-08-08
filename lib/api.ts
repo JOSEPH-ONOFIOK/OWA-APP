@@ -1,0 +1,97 @@
+const BASE = "https://owa-api.vercel.app";
+const TIMEOUT_MS = 20000;
+
+type Token = string | null | undefined;
+type Body = Record<string, unknown>;
+
+async function fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    throw err instanceof Error && err.name === "AbortError"
+      ? new Error("Request timed out. Please try again.")
+      : err;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+async function post(path: string, body: Body, token?: Token) {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetchWithTimeout(`${BASE}${path}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || "Something went wrong");
+  return data;
+}
+
+async function postForm(path: string, formData: FormData, token?: Token) {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetchWithTimeout(`${BASE}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || "Something went wrong");
+  return data;
+}
+
+async function get(path: string, token?: Token) {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetchWithTimeout(`${BASE}${path}`, { method: "GET", headers });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || "Something went wrong");
+  return data;
+}
+
+export const api = {
+  registerStudent: (body: Body) => post("/auth/register/student", body),
+  registerDriver: (body: Body) => post("/auth/register/driver", body),
+  verify: (body: Body) => post("/auth/verify/email", body),
+  resendOtp: (body: Body) => post("/auth/verify/resend", body),
+  login: (body: Body) => post("/auth/login", body),
+  recoverPassword: (body: Body) => post("/auth/password/recover", body),
+  resetPassword: (body: Body) => post("/auth/password/reset", body),
+  driverOnboard: (fd: FormData, token?: Token) => postForm("/drivers/onboard", fd, token),
+  driverDetails: (fd: FormData, token?: Token) => postForm("/drivers/details", fd, token),
+  driverBank: (body: Body, token?: Token) => post("/drivers/bank", body, token),
+  userProfile: (token?: Token) => get("/users/profile", token),
+  driverProfile: (token?: Token) => get("/drivers/profile", token),
+  walletDetails: (token?: Token) => get("/wallet/me", token),
+  walletTopup: (body: Body, token?: Token) => post("/wallet/topup", body, token),
+  authorizeCardOtp: (body: Body, token?: Token) => post("/wallet/authorize-card-otp", body, token),
+  setWalletPin: (body: Body, token?: Token) => post("/wallet/set-pin", body, token),
+  walletTransfer: (body: Body, token?: Token) => post("/wallet/transfer", body, token),
+  walletTransactions: (token?: Token) => get("/wallet/transactions", token),
+};
+
+export const formatPhone = (local: string) => "+234" + local.replace(/\D/g, "").replace(/^0/, "");
+
+const hasWindow = () => typeof window !== "undefined";
+
+export const saveToken = (t: string) => { if (hasWindow()) localStorage.setItem("owa_token", t); };
+export const getToken = () => (hasWindow() ? localStorage.getItem("owa_token") : null);
+export const saveName = (name: string) => { if (hasWindow()) localStorage.setItem("owa_name", name); };
+export const getSavedName = () => (hasWindow() ? localStorage.getItem("owa_name") ?? "" : "");
+export const logout = () => {
+  if (!hasWindow()) return;
+  localStorage.removeItem("owa_token");
+  localStorage.removeItem("owa_name");
+};
+
+export const getRoleFromToken = (token: string): string | null => {
+  try {
+    return JSON.parse(atob(token.split(".")[1])).role ?? null;
+  } catch {
+    return null;
+  }
+};
