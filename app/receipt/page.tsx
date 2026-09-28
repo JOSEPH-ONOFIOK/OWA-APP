@@ -1,20 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useWizardState } from "@/lib/wizardState";
-import avatarYusuf from "@/assets/images/figma-avatar-yusuf.png";
+import Avatar from "@/components/Avatar";
 
 const BLUE = '#0066FF'
 
 interface ReceiptState {
   amount?: string | number
+  driverName?: string
+  driverId?: string
 }
 
 export default function Receipt() {
   const router = useRouter()
   const state = useWizardState<ReceiptState>()
   const amount = state?.amount ?? '150'
+  const driverName = state?.driverName || 'Driver'
+  const driverId = state?.driverId || '—'
 
   const now = new Date()
   const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
@@ -65,7 +68,7 @@ export default function Receipt() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <div>
                 <p style={{ fontSize: 11, color: '#999', fontWeight: 600, letterSpacing: '0.05em', margin: '0 0 4px' }}>DRIVER TAG</p>
-                <p style={{ fontSize: 15, fontWeight: 700, color: '#111', margin: 0 }}>BUS-012</p>
+                <p style={{ fontSize: 15, fontWeight: 700, color: '#111', margin: 0 }}>{driverId}</p>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <p style={{ fontSize: 11, color: '#999', fontWeight: 600, letterSpacing: '0.05em', margin: '0 0 4px' }}>AMOUNT</p>
@@ -81,11 +84,11 @@ export default function Receipt() {
 
             {/* Driver row */}
             <div style={{ background: '#F0FFF4', borderRadius: 12, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Image src={avatarYusuf} alt="" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+              <Avatar name={driverName} size={40} />
               <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: '#111', margin: '0 0 2px' }}>Yusuf Toheeb</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#111', margin: '0 0 2px' }}>{driverName}</p>
                 <p style={{ fontSize: 13, color: '#555', margin: 0 }}>
-                  Code: <span style={{ color: BLUE, fontWeight: 600 }}>899</span>
+                  Tag: <span style={{ color: BLUE, fontWeight: 600 }}>{driverId}</span>
                 </p>
               </div>
             </div>

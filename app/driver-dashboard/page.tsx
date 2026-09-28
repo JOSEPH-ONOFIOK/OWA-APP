@@ -4,27 +4,43 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { api, getToken, getSavedName } from "@/lib/api";
+import Avatar from "@/components/Avatar";
 
 import piggyImg   from "@/assets/images/figma-driver-card-piggy.png";
-import avatarYusuf from "@/assets/images/figma-avatar-yusuf.png";
 
 const BLUE = '#0066FF'
 
 interface Profile {
   fullName?: string
-  wallet?: { balance?: number }
+  driverTagNumber?: string
 }
 
-const days     = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
-const values   = [7200, 4000, 8890, 2400, 5150, 3600, 1800]
-const maxVal   = Math.max(...values)
-const activeDay = 4 // Fri
+interface Transaction {
+  _id: string
+  type: string
+  amount: number
+  metadata?: { remark?: string }
+  createdAt: string
+}
 
-const transactions = [
-  { id: 1, name: 'Anthonia Salako', time: 'Today, 9:00 AM',       amount: '+₦150',   color: '#4FDB5F', type: 'send' },
-  { id: 2, name: 'Obed Moses',      time: 'Today, 9:03 PM',       amount: '+₦150',   color: '#4FDB5F', type: 'send' },
-  { id: 3, name: 'Withdrawal',      time: 'Yesterday, 08:43 AM',  amount: '-₦8,000', color: '#F94242', type: 'bank' },
-]
+const timeLabel = (iso: string) => {
+  const d = new Date(iso)
+  const now = new Date()
+  const startOfDay = (dt: Date) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())
+  const diffDays = Math.round((startOfDay(now).getTime() - startOfDay(d).getTime()) / 86400000)
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  if (diffDays === 0) return `Today, ${time}`
+  if (diffDays === 1) return `Yesterday, ${time}`
+  return `${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}, ${time}`
+}
+
+const IconQr = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292D32" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+    <rect x="3" y="14" width="7" height="7" rx="1"/>
+    <path d="M14 17h.01M14 20h3v-3M20 17h.01M20 20h.01"/>
+  </svg>
+)
 
 const IconSend = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -74,12 +90,14 @@ export default function DriverDashboard() {
   const [detailsError, setDetailsError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const [walletUnavailable, setWalletUnavailable] = useState(false)
+  const [balance, setBalance] = useState<number | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
 
   useEffect(() => {
-    api.driverProfile(getToken())
-      .then(setProfile)
-      .catch(() => setWalletUnavailable(true))
+    const token = getToken()
+    api.driverProfile(token).then(setProfile).catch(() => {})
+    api.walletBalance(token).then(setBalance).catch(() => {})
+    api.walletTransactions(token).then(res => setTransactions(res?.items ?? [])).catch(() => {})
   }, [])
 
   const handlePicSelect = (file: File) => {
@@ -110,11 +128,7 @@ export default function DriverDashboard() {
       {/* HEADER */}
       <div style={{ background: 'white', padding: '52px 20px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div onClick={() => setShowDetailsSheet(true)} style={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
-          {picPreview
-            // eslint-disable-next-line @next/next/no-img-element -- blob: URL from a local file pick, not a next/image-compatible source
-            ? <img src={picPreview} alt="" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
-            : <Image src={avatarYusuf} alt="" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
-          }
+          <Avatar name={profile?.fullName ?? getSavedName()} src={picPreview} size={46} />
           <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderRadius: '50%', background: BLUE, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </div>
@@ -123,7 +137,14 @@ export default function DriverDashboard() {
           <p style={{ fontSize: 14, color: '#666', margin: 0 }}>Welcome Back</p>
           <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Driver')}</p>
         </div>
-        <button onClick={() => router.push('/notifications')} style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button
+          onClick={() => profile?.driverTagNumber ? router.push('/my-qr-code') : setShowDetailsSheet(true)}
+          aria-label="Show QR code"
+          style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <IconQr />
+        </button>
+        <button onClick={() => router.push('/notifications')} aria-label="Notifications" style={{ width: 38, height: 38, borderRadius: '50%', background: '#F2F2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#292D32" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
           </svg>
@@ -151,7 +172,7 @@ export default function DriverDashboard() {
           {/* Balance — white */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18, position: 'relative', zIndex: 1 }}>
             <span style={{ fontSize: 30, fontWeight: 700, color: 'white', letterSpacing: -0.5 }}>
-              {walletUnavailable ? '—' : showBal ? `₦${(profile?.wallet?.balance ?? 0).toLocaleString()}` : '₦• • • •'}
+              {balance === null ? '—' : showBal ? `₦${balance.toLocaleString()}` : '₦• • • •'}
             </span>
             <button onClick={() => setShowBal(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -170,40 +191,6 @@ export default function DriverDashboard() {
           </button>
         </div>
 
-        {/* DAILY EARNINGS CHART */}
-        <div style={{ background: 'white', borderRadius: 16, padding: '16px 16px 12px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-            <div>
-              <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 3px' }}>Daily Earnings</p>
-              <p style={{ fontSize: 12, color: '#999', margin: 0 }}>March 20th, 2026</p>
-            </div>
-            <button style={{ width: 32, height: 32, borderRadius: 8, background: '#F8F8F8', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-
-          {/* Bar chart — only active bar has label, active bar is blue */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 120 }}>
-            {values.map((val, i) => {
-              const isActive = i === activeDay
-              const pct = (val / maxVal) * 80
-              return (
-                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, height: '100%', justifyContent: 'flex-end' }}>
-                  {isActive && (
-                    <span style={{ fontSize: 10, fontWeight: 600, color: BLUE, whiteSpace: 'nowrap', marginBottom: 2 }}>₦{val.toLocaleString()}</span>
-                  )}
-                  <div style={{ width: '100%', height: `${pct}%`, background: isActive ? BLUE : '#E0E0E0', borderRadius: 4, minHeight: 8 }} />
-                </div>
-              )
-            })}
-          </div>
-          <div style={{ display: 'flex', marginTop: 8 }}>
-            {days.map((d, i) => (
-              <span key={d} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: i === activeDay ? '#111' : '#999', fontWeight: i === activeDay ? 700 : 400 }}>{d}</span>
-            ))}
-          </div>
-        </div>
-
         {/* TRANSACTIONS */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -211,18 +198,27 @@ export default function DriverDashboard() {
             <button onClick={() => router.push('/transaction-history')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {transactions.map(tx => (
-              <div key={tx.id} style={{ background: '#FBFBFB', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 12, background: '#EDEDED', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {tx.type === 'send' ? <IconSend /> : <IconBank />}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 15, fontWeight: 500, color: '#333', margin: '0 0 2px' }}>{tx.name}</p>
-                  <p style={{ fontSize: 11, color: '#666', margin: 0 }}>{tx.time}</p>
-                </div>
-                <p style={{ fontSize: 15, fontWeight: 700, color: tx.color, margin: 0 }}>{tx.amount}</p>
-              </div>
-            ))}
+            {transactions.length === 0 ? (
+              <p style={{ fontSize: 13, color: '#999', textAlign: 'center', padding: '20px 0' }}>No transactions yet</p>
+            ) : (
+              transactions.slice(0, 3).map(tx => {
+                const isCredit = tx.type === 'TOPUP'
+                return (
+                  <div key={tx._id} style={{ background: '#FBFBFB', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 42, height: 42, borderRadius: 12, background: '#EDEDED', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {isCredit ? <IconBank /> : <IconSend />}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 15, fontWeight: 500, color: '#333', margin: '0 0 2px' }}>{tx.metadata?.remark || (isCredit ? 'Wallet Top Up' : tx.type)}</p>
+                      <p style={{ fontSize: 11, color: '#666', margin: 0 }}>{timeLabel(tx.createdAt)}</p>
+                    </div>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: isCredit ? '#4FDB5F' : '#F94242', margin: 0 }}>
+                      {isCredit ? '+' : '-'}₦{tx.amount.toLocaleString()}
+                    </p>
+                  </div>
+                )
+              })
+            )}
           </div>
         </div>
       </div>
@@ -243,11 +239,7 @@ export default function DriverDashboard() {
             {/* Profile picture */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
               <div style={{ position: 'relative', marginBottom: 10 }}>
-                {picPreview
-                  // eslint-disable-next-line @next/next/no-img-element -- blob: URL from a local file pick, not a next/image-compatible source
-                  ? <img src={picPreview} alt="" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }} />
-                  : <Image src={avatarYusuf} alt="" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }} />
-                }
+                <Avatar name={profile?.fullName ?? getSavedName()} src={picPreview} size={80} style={{ border: '2px solid #e5e7eb' }} />
                 <label style={{ position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: '50%', background: BLUE, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                   <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => e.target.files?.[0] && handlePicSelect(e.target.files[0])} />
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import jsQR from "jsqr";
 import { pushWithState } from "@/lib/wizardState";
+import { decodeDriverQr } from "@/lib/qr";
 
 const BLUE = '#0066FF'
 
@@ -21,15 +23,79 @@ const Corner = ({ top, bottom, left, right }: { top?: number; bottom?: number; l
 export default function ScanQRCode() {
   const router = useRouter()
   const [torchOn, setTorchOn] = useState(false)
+  const [cameraError, setCameraError] = useState('')
+  const [scanMsg, setScanMsg] = useState('')
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const foundRef = useRef(false)
 
-  // Simulate a QR detection so the flow completes without a real camera
+  const handleDecoded = useCallback((text: string) => {
+    const tag = decodeDriverQr(text)
+    if (!tag) {
+      setScanMsg("That's not an OWA driver code")
+      setTimeout(() => setScanMsg(''), 2000)
+      return
+    }
+    if (foundRef.current) return
+    foundRef.current = true
+    streamRef.current?.getTracks().forEach(t => t.stop())
+    pushWithState(router, '/transfer-amount', { driverId: tag })
+  }, [router])
+
   useEffect(() => {
-    const id = setTimeout(() => {
-      pushWithState(router, '/transfer-amount', { driverName: 'Yusuf Toheeb', driverId: 'BUS-012' })
-    }, 3500)
-    return () => clearTimeout(id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    let cancelled = false
+
+    const tick = () => {
+      const video = videoRef.current
+      const canvas = canvasRef.current
+      if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA) {
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
+        if (ctx) {
+          canvas.width = video.videoWidth
+          canvas.height = video.videoHeight
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+          const code = jsQR(imageData.data, imageData.width, imageData.height)
+          if (code?.data) handleDecoded(code.data)
+        }
+      }
+      if (!cancelled) rafRef.current = requestAnimationFrame(tick)
+    }
+
+    navigator.mediaDevices
+      ?.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return }
+        streamRef.current = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play().catch(() => {})
+        }
+        rafRef.current = requestAnimationFrame(tick)
+      })
+      .catch(() => setCameraError('Camera access is unavailable. You can still pay by tag number.'))
+
+    return () => {
+      cancelled = true
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      streamRef.current?.getTracks().forEach(t => t.stop())
+    }
+  }, [handleDecoded])
+
+  const toggleTorch = async () => {
+    const track = streamRef.current?.getVideoTracks()[0]
+    if (!track) return
+    const next = !torchOn
+    try {
+      // @ts-expect-error -- torch is a non-standard MediaTrackConstraint, only supported on some Android browsers
+      await track.applyConstraints({ advanced: [{ torch: next }] })
+      setTorchOn(next)
+    } catch {
+      // torch unsupported on this device/browser (e.g. iOS Safari) — no-op
+    }
+  }
 
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
@@ -45,7 +111,7 @@ export default function ScanQRCode() {
           </svg>
         </button>
         <span style={{ fontSize: 18, fontWeight: 500, color: '#333' }}>Scan QR Code</span>
-        <span style={{ fontSize: 14, fontWeight: 500, color: BLUE }}>Album</span>
+        <span style={{ width: 38 }} />
       </div>
 
       {/* VIEWFINDER */}
@@ -57,13 +123,28 @@ export default function ScanQRCode() {
           <Corner bottom={0} right={0} />
           <div style={{
             position: 'absolute', inset: 16, borderRadius: 20, border: `2px solid ${BLUE}`,
-            overflow: 'hidden', background: '#FAFBFF',
+            overflow: 'hidden', background: '#000',
           }}>
-            <div style={{
-              position: 'absolute', left: 0, right: 0, height: 2,
-              background: 'linear-gradient(90deg, transparent, #4ADE80, transparent)',
-              animation: 'scanline 2s ease-in-out infinite',
-            }} />
+            {cameraError ? (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, textAlign: 'center' }}>
+                <p style={{ fontSize: 13, color: 'white', lineHeight: 1.5, margin: 0 }}>{cameraError}</p>
+              </div>
+            ) : (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            )}
+            {!cameraError && (
+              <div style={{
+                position: 'absolute', left: 0, right: 0, height: 2,
+                background: 'linear-gradient(90deg, transparent, #4ADE80, transparent)',
+                animation: 'scanline 2s ease-in-out infinite',
+              }} />
+            )}
           </div>
           <style>{`
             @keyframes scanline {
@@ -74,18 +155,26 @@ export default function ScanQRCode() {
           `}</style>
         </div>
 
-        <button
-          onClick={() => setTorchOn(v => !v)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 40 }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill={torchOn ? '#333' : 'none'} stroke="#333" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 2h6l1 5-3 2v9a2 2 0 01-4 0v-9L6 7z"/>
-          </svg>
-        </button>
+        {!cameraError && (
+          <button
+            onClick={toggleTorch}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 40 }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill={torchOn ? '#333' : 'none'} stroke="#333" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 2h6l1 5-3 2v9a2 2 0 01-4 0v-9L6 7z"/>
+            </svg>
+          </button>
+        )}
 
-        <p style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: '24px 0 0', lineHeight: 1.5, maxWidth: 280 }}>
-          Use your device camera to scan the QR code to make payment.
-        </p>
+        {scanMsg && (
+          <p style={{ fontSize: 13, color: '#F94242', textAlign: 'center', margin: '16px 0 0' }}>{scanMsg}</p>
+        )}
+
+        {!scanMsg && (
+          <p style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: '24px 0 0', lineHeight: 1.5, maxWidth: 280 }}>
+            Point your camera at a driver&apos;s OWA QR code to pay them.
+          </p>
+        )}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', maxWidth: 320, margin: '20px 0' }}>
           <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
@@ -93,6 +182,9 @@ export default function ScanQRCode() {
           <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
         </div>
       </div>
+
+      {/* Hidden capture canvas — used to grab video frames for decoding, never shown */}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
 
       {/* INPUT TAG NUMBER */}
       <div style={{ padding: '0 20px 40px' }}>

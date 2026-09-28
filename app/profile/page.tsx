@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { api, getToken, getSavedName, logout } from "@/lib/api";
-import avatarMe from "@/assets/images/figma-avatar-ijandipe.png";
+import Avatar from "@/components/Avatar";
 
 const BLUE = '#0066FF'
 const GRAY = '#666'
@@ -98,7 +97,7 @@ export default function PassengerProfile() {
         alignItems: 'center',
         gap: 10,
       }}>
-        <Image src={avatarMe} alt="" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)' }} />
+        <Avatar name={(profile?.fullName ?? getSavedName()) || 'Student'} size={72} style={{ border: '2px solid rgba(255,255,255,0.3)' }} />
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 16, fontWeight: 600, color: 'white', margin: '0 0 4px' }}>{(profile?.fullName ?? getSavedName()) || 'Student'}</p>
           <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', margin: 0 }}>{profile?.phone ?? '—'}</p>
@@ -116,8 +115,8 @@ export default function PassengerProfile() {
 
         <SectionLabel label="Account Settings" />
         <div style={{ background: 'white', borderRadius: 12 }}>
-          <MenuItem icon={<UserIcon />} title="Personal Information" subtitle="Update your name and details" />
-          <MenuItem icon={<ShieldIcon />} title="Security Settings" subtitle="Change password & PIN" onPress={() => router.push('/setup-pin')} />
+          <MenuItem icon={<UserIcon />} title="Personal Information" subtitle="Update your name and details" onPress={() => router.push('/personal-information')} />
+          <MenuItem icon={<ShieldIcon />} title="Security Settings" subtitle="Change password & PIN" onPress={() => router.push('/security-settings')} />
           <MenuItem icon={<CardIcon />} title="Payment Methods" subtitle="Manage funding options" />
         </div>
 
@@ -130,7 +129,7 @@ export default function PassengerProfile() {
         <SectionLabel label="Support Section" />
         <div style={{ background: 'white', borderRadius: 12 }}>
           <MenuItem icon={<HelpIcon />} title="Help & Support" subtitle="Get assistance" />
-          <MenuItem icon={<FlagIcon />} title="Report an Issue" subtitle="Report driver or payment issues" />
+          <MenuItem icon={<FlagIcon />} title="Report an Issue" subtitle="Report driver or payment issues" onPress={() => router.push('/report-issue')} />
         </div>
 
         <SectionLabel label="About Section" />

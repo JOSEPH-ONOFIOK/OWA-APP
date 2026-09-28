@@ -6,9 +6,10 @@ import { api, getToken } from "@/lib/api";
 import { pushWithState, useWizardState } from "@/lib/wizardState";
 
 interface EnterPinState {
-  type?: 'addMoney' | 'withdrawal' | 'driver'
+  type?: 'withdrawal' | 'driver'
   amount?: string | number
   driverId?: string
+  driverName?: string
   remark?: string
 }
 
@@ -36,9 +37,9 @@ export default function EnterPin() {
     const token = getToken()
 
     try {
-      if (state?.type === 'addMoney') {
-        await api.walletTopup({ amount: Number(state?.amount), method: 'transfer' }, token)
-      } else if (state?.type !== 'withdrawal') {
+      if (state?.type === 'withdrawal') {
+        await api.walletWithdraw({ amount: Number(state?.amount), pin: val }, token)
+      } else {
         await api.walletTransfer({
           driverTagNumber: state?.driverId,
           amount: Number(state?.amount),
@@ -46,13 +47,10 @@ export default function EnterPin() {
           pin: val,
         }, token)
       }
-      // No dedicated withdraw-to-bank endpoint yet — withdrawal stays local for now.
 
-      const dest = state?.type === 'addMoney'
-        ? { pathname: '/payment-success', state: { type: 'addMoney', amount: state?.amount } }
-        : state?.type === 'withdrawal'
+      const dest = state?.type === 'withdrawal'
         ? { pathname: '/payment-success', state: { type: 'withdrawal', amount: state?.amount } }
-        : { pathname: '/payment-success', state: { ...state, type: 'driver', driverName: 'Yusuf' } }
+        : { pathname: '/payment-success', state: { ...state, type: 'driver', driverName: state?.driverName ?? 'Driver' } }
       setTimeout(() => pushWithState(router, dest.pathname, dest.state), 1500)
     } catch (err) {
       setLoading(false)

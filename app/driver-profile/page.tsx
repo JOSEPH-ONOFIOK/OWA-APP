@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { api, getToken, getSavedName, logout } from "@/lib/api";
-import avatarYusuf from "@/assets/images/figma-avatar-yusuf.png";
+import Avatar from "@/components/Avatar";
 
 const BLUE = '#0066FF'
 const GRAY = '#666'
@@ -67,6 +66,9 @@ export default function DriverProfile() {
 
   const handleLogout = () => { logout(); router.push('/login') }
 
+  const completionFactors = [Boolean(profile?.driverTagNumber), Boolean(profile?.wallet), Boolean(profile?.verified)]
+  const completionPct = profile ? Math.round((completionFactors.filter(Boolean).length / completionFactors.length) * 100) : null
+
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column', paddingBottom: 80 }}>
 
@@ -98,7 +100,7 @@ export default function DriverProfile() {
         gap: 10,
       }}>
         <div style={{ position: 'relative' }}>
-          <Image src={avatarYusuf} alt="" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)' }} />
+          <Avatar name={(profile?.fullName ?? getSavedName()) || 'Driver'} size={72} style={{ border: '2px solid rgba(255,255,255,0.3)' }} />
           {/* Bus Driver badge */}
           <div style={{ position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 999, padding: '2px 10px', whiteSpace: 'nowrap' }}>
             <span style={{ fontSize: 10, fontWeight: 500, color: DARK }}>{profile?.vehicleType ?? 'Driver'}</span>
@@ -119,11 +121,13 @@ export default function DriverProfile() {
       {/* PROFILE COMPLETION */}
       <div style={{ margin: '14px 20px 0', background: 'white', border: '1px solid #F0F0F0', borderRadius: 14, padding: '14px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-          <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>Your profile is 100% complete</p>
+          <p style={{ fontSize: 13, fontWeight: 500, color: DARK, margin: 0 }}>
+            {completionPct === null ? 'Loading profile completion...' : `Your profile is ${completionPct}% complete`}
+          </p>
         </div>
         <p style={{ fontSize: 12, color: GRAY, margin: '0 0 10px' }}>Account Verification</p>
         <div style={{ height: 6, background: '#E5E7EB', borderRadius: 999, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: '100%', background: 'rgb(31,54,201)', borderRadius: 999 }} />
+          <div style={{ height: '100%', width: `${completionPct ?? 0}%`, background: 'rgb(31,54,201)', borderRadius: 999 }} />
         </div>
       </div>
 
@@ -152,13 +156,28 @@ export default function DriverProfile() {
         </button>
       </div>
 
+      {/* MY QR CODE */}
+      <div style={{ margin: '14px 20px 0' }}>
+        <button
+          onClick={() => router.push('/my-qr-code')}
+          style={{ width: '100%', height: 52, borderRadius: 14, background: 'white', border: '1px solid #F0F0F0', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <path d="M14 17h.01M14 20h3v-3M20 17h.01M20 20h.01"/>
+          </svg>
+          My Payment QR Code
+        </button>
+      </div>
+
       {/* MENU */}
       <div style={{ padding: '0 20px', flex: 1 }}>
 
         <SectionLabel label="Account Settings" />
         <div style={{ background: 'white', borderRadius: 12 }}>
-          <MenuItem icon={<UserIcon />} title="Personal Information" subtitle="Update your name and details" />
-          <MenuItem icon={<ShieldIcon />} title="Security Settings" subtitle="Change password & PIN" />
+          <MenuItem icon={<UserIcon />} title="Personal Information" subtitle="Update your name and details" onPress={() => router.push('/personal-information')} />
+          <MenuItem icon={<ShieldIcon />} title="Security Settings" subtitle="Change password & PIN" onPress={() => router.push('/security-settings')} />
           <MenuItem icon={<CardIcon />} title="Payment Methods" subtitle="Manage funding options" />
         </div>
 
@@ -171,7 +190,7 @@ export default function DriverProfile() {
         <SectionLabel label="Support Section" />
         <div style={{ background: 'white', borderRadius: 12 }}>
           <MenuItem icon={<HelpIcon />} title="Help & Support" subtitle="Get assistance" />
-          <MenuItem icon={<FlagIcon />} title="Report an Issue" subtitle="Report passenger or payment issues" />
+          <MenuItem icon={<FlagIcon />} title="Report an Issue" subtitle="Report passenger or payment issues" onPress={() => router.push('/report-issue')} />
         </div>
 
         <SectionLabel label="About Section" />

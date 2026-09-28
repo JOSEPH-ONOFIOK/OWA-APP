@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { pushWithState } from "@/lib/wizardState";
 
@@ -9,6 +9,11 @@ const BLUE = '#0066FF'
 export default function SendToDriver() {
   const router = useRouter()
   const [tagId, setTagId] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
 
   const canProceed = tagId.trim().length > 0
 
@@ -46,10 +51,12 @@ export default function SendToDriver() {
         <div>
           <p style={{ fontSize: 15, fontWeight: 600, color: '#111', margin: '0 0 10px' }}>Driver Tag ID</p>
           <input
+            ref={inputRef}
             type="text"
             value={tagId}
             onChange={e => setTagId(e.target.value)}
             placeholder="Enter Tag ID"
+            autoFocus
             style={{
               width: '100%',
               height: 54,
@@ -102,7 +109,7 @@ export default function SendToDriver() {
       {/* PROCEED BUTTON */}
       <div style={{ padding: '0 20px 40px' }}>
         <button
-          onClick={() => canProceed && pushWithState(router, '/transfer-amount', { tagId })}
+          onClick={() => canProceed && pushWithState(router, '/transfer-amount', { driverId: tagId })}
           style={{
             width: '100%',
             height: 56,

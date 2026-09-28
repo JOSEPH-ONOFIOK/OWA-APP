@@ -1,18 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api, getToken } from "@/lib/api";
 import { useWizardState } from "@/lib/wizardState";
 
 const BLUE = '#0066FF'
-
-const keys = [
-  '1','2','3',
-  '4','5','6',
-  '7','8','9',
-  '','0','⌫',
-]
 
 interface SetupPinState {
   role?: 'driver' | 'passenger'
@@ -22,19 +15,19 @@ export default function SetupPin() {
   const router = useRouter()
   const state = useWizardState<SetupPinState>()
   const dest = state?.role === 'driver' ? '/driver-dashboard' : '/dashboard'
-  const [pin, setPin] = useState<string[]>([])
+  const [pin, setPin] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleKey = (key: string) => {
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (success || loading) return
-    if (key === '') return
-    if (key === '⌫') {
-      setPin(prev => prev.slice(0, -1))
-    } else if (pin.length < 4) {
-      setPin(prev => [...prev, key])
-    }
+    setPin(e.target.value.replace(/\D/g, '').slice(0, 4))
   }
 
   const handleAddPin = async () => {
@@ -42,7 +35,7 @@ export default function SetupPin() {
     setLoading(true)
     setError('')
     try {
-      await api.setWalletPin({ pin: pin.join('') }, getToken())
+      await api.setWalletPin({ pin }, getToken())
       setSuccess(true)
     } catch (err) {
       setError((err as Error).message)
@@ -51,10 +44,25 @@ export default function SetupPin() {
     }
   }
 
-  const pinDisplay = pin.join('')
+  const pinDisplay = pin
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column' }}
+      onClick={() => inputRef.current?.focus()}
+    >
+      {/* Hidden native input — triggers the device keyboard */}
+      <input
+        ref={inputRef}
+        type="tel"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={pin}
+        onChange={handleChange}
+        maxLength={4}
+        style={{ position: 'absolute', opacity: 0, width: 1, height: 1, pointerEvents: 'none' }}
+        autoFocus
+      />
 
       {/* BACK */}
       <div style={{ padding: '52px 24px 0' }}>
@@ -115,38 +123,11 @@ export default function SetupPin() {
         )}
       </div>
 
-      {/* CUSTOM NUMPAD */}
-      <div style={{ padding: '32px 32px 40px', marginTop: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-          {keys.map((key, i) => {
-            if (key === '') return <div key={i} />
-            return (
-              <button
-                key={i}
-                onClick={() => handleKey(key)}
-                style={{
-                  height: 70,
-                  borderRadius: '50%',
-                  background: key === '⌫' ? '#1A1A1A' : '#E8E8E8',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 22,
-                  fontWeight: 500,
-                  color: key === '⌫' ? 'white' : '#111',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                {key === '⌫'
-                  ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  : key
-                }
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {!success && (
+        <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', marginTop: 32 }}>
+          Tap anywhere to show keyboard
+        </p>
+      )}
 
       {/* SUCCESS BOTTOM SHEET */}
       {success && (

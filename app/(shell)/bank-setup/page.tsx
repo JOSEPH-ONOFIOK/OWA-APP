@@ -1,28 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api, getToken } from "@/lib/api";
 import { pushWithState, useWizardState } from "@/lib/wizardState";
-
-const BANKS = [
-  { name: 'Access Bank',        code: '044' },
-  { name: 'First Bank',         code: '011' },
-  { name: 'GTBank',             code: '058' },
-  { name: 'Zenith Bank',        code: '057' },
-  { name: 'UBA',                code: '033' },
-  { name: 'Fidelity Bank',      code: '070' },
-  { name: 'Sterling Bank',      code: '232' },
-  { name: 'Union Bank',         code: '032' },
-  { name: 'FCMB',               code: '214' },
-  { name: 'Stanbic IBTC',       code: '221' },
-  { name: 'Wema Bank',          code: '035' },
-  { name: 'Polaris Bank',       code: '076' },
-  { name: 'OPay',               code: '999992' },
-  { name: 'Palmpay',            code: '999991' },
-  { name: 'Kuda Bank',          code: '50211' },
-  { name: 'Moniepoint',         code: '50515' },
-]
+import { BANKS } from "@/lib/banks";
 
 const inputStyle = {
   width: '100%', height: 56, borderRadius: 16,
@@ -37,10 +19,29 @@ export default function BankSetup() {
   const [selectedBank, setSelectedBank] = useState<{ name: string; code: string } | null>(null)
   const [accountNumber, setAccountNumber] = useState('')
   const [dropOpen, setDropOpen] = useState(false)
+  const [resolution, setResolution] = useState<{ key: string; name?: string; error?: string } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const canSave = selectedBank && accountNumber.length === 10
+  const resolveKey = selectedBank && accountNumber.length === 10 ? `${selectedBank.code}:${accountNumber}` : null
+
+  useEffect(() => {
+    if (!resolveKey || !selectedBank) return
+    let cancelled = false
+    api.resolveAccount(accountNumber, selectedBank.code, getToken())
+      .then(res => { if (!cancelled) setResolution({ key: resolveKey, name: res?.accountName ?? '' }) })
+      .catch(err => { if (!cancelled) setResolution({ key: resolveKey, error: (err as Error).message }) })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolveKey])
+
+  // Ignore a resolution left over from a previous bank/account-number pair
+  const current = resolution?.key === resolveKey ? resolution : null
+  const resolving = Boolean(resolveKey) && !current
+  const resolvedName = current?.name ?? ''
+  const resolveError = current?.error ?? ''
+
+  const canSave = selectedBank && accountNumber.length === 10 && Boolean(resolvedName) && !resolving
 
   const handleSave = async () => {
     if (!canSave || loading) return
@@ -110,6 +111,22 @@ export default function BankSetup() {
               style={inputStyle}
             />
           </div>
+
+          {/* Resolved account name — confirmed by the bank, not typed */}
+          {(resolving || resolvedName || resolveError) && (
+            <div style={{ borderRadius: 16, border: `1px solid ${resolveError ? '#fca5a5' : '#bbf7d0'}`, background: resolveError ? '#fef2f2' : '#f0fdf4', padding: '14px 16px' }}>
+              {resolving ? (
+                <p style={{ fontSize: 13, color: '#6b7280', margin: 0 }}>Resolving account name...</p>
+              ) : resolveError ? (
+                <p style={{ fontSize: 13, color: '#ef4444', margin: 0 }}>{resolveError}</p>
+              ) : (
+                <>
+                  <p style={{ fontSize: 11, color: '#16a34a', margin: '0 0 2px', fontWeight: 600, letterSpacing: '0.03em' }}>ACCOUNT NAME</p>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: 0 }}>{resolvedName}</p>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div style={{ paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>

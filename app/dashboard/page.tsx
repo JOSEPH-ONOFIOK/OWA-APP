@@ -4,60 +4,49 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { api, getToken, getSavedName } from "@/lib/api";
+import Avatar from "@/components/Avatar";
 
 import coin1      from "@/assets/images/figma-card-coin1.png";
 import coin2      from "@/assets/images/figma-card-coin2.png";
 import promoCard1 from "@/assets/images/figma-promo-card1.png";
 import promoCard2 from "@/assets/images/figma-promo-card2.png";
-import avatarMe   from "@/assets/images/figma-avatar-ijandipe.png";
 
 const BLUE = '#0066FF'
 
 interface Profile {
   fullName?: string
-  wallet?: { balance?: number }
 }
 
-// Exact colors from Figma
-const transactions = [
-  {
-    id: 1, name: 'Bus to main Gate', time: 'Today, 08:43 AM',
-    amount: '-₦150', amtColor: '#F94242',
-    iconBg: '#EAF2FF', iconColor: '#0066FF', type: 'bus',
-  },
-  {
-    id: 2, name: 'Wallet Top Up', time: 'Today, 08:43 AM',
-    amount: '+₦1000', amtColor: '#69EB23',
-    iconBg: '#EFFFE7', iconColor: '#69EB23', type: 'bank',
-  },
-  {
-    id: 3, name: 'Joseph Onofiok', time: 'Yesterday, 03:20 PM',
-    amount: '-₦150', amtColor: '#F94242',
-    iconBg: '#FFEAEA', iconColor: '#F94242', type: 'send',
-  },
-]
-
-const TxIcon = ({ type, color }: { type: string; color: string }) => {
-  if (type === 'bus') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/>
-      <path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 00-2 2v10h3"/>
-      <circle cx="7" cy="18" r="2"/><circle cx="15" cy="18" r="2"/>
-    </svg>
-  )
-  if (type === 'bank') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="3" y1="22" x2="21" y2="22"/>
-      <rect x="5" y="11" width="4" height="10"/><rect x="10" y="11" width="4" height="10"/><rect x="15" y="11" width="4" height="10"/>
-      <path d="M2 11l10-7 10 7"/>
-    </svg>
-  )
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-    </svg>
-  )
+interface Transaction {
+  _id: string
+  type: string
+  amount: number
+  metadata?: { remark?: string }
+  createdAt: string
 }
+
+const timeLabel = (iso: string) => {
+  const d = new Date(iso)
+  const now = new Date()
+  const startOfDay = (dt: Date) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())
+  const diffDays = Math.round((startOfDay(now).getTime() - startOfDay(d).getTime()) / 86400000)
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  if (diffDays === 0) return `Today, ${time}`
+  if (diffDays === 1) return `Yesterday, ${time}`
+  return `${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}, ${time}`
+}
+
+const TxIcon = ({ isCredit }: { isCredit: boolean }) => isCredit ? (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#69EB23" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="22" x2="21" y2="22"/>
+    <rect x="5" y="11" width="4" height="10"/><rect x="10" y="11" width="4" height="10"/><rect x="15" y="11" width="4" height="10"/>
+    <path d="M2 11l10-7 10 7"/>
+  </svg>
+) : (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+  </svg>
+)
 
 const quickActions = [
   {
@@ -80,13 +69,15 @@ export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('home')
   const [promoIdx, setPromoIdx] = useState(0)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [walletUnavailable, setWalletUnavailable] = useState(false)
+  const [balance, setBalance] = useState<number | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    api.userProfile(getToken())
-      .then(setProfile)
-      .catch(() => setWalletUnavailable(true))
+    const token = getToken()
+    api.userProfile(token).then(setProfile).catch(() => {})
+    api.walletBalance(token).then(setBalance).catch(() => {})
+    api.walletTransactions(token).then(res => setTransactions(res?.items ?? [])).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -105,7 +96,7 @@ export default function StudentDashboard() {
 
       {/* HEADER */}
       <div style={{ background: 'white', padding: '52px 20px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Image src={avatarMe} alt="" style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        <Avatar name={profile?.fullName ?? getSavedName()} size={46} />
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 15, color: '#666', margin: 0, fontWeight: 400 }}>Welcome Back</p>
           <p style={{ fontSize: 15, fontWeight: 600, color: '#333', margin: 0 }}>{profile?.fullName ?? (getSavedName() || 'Student')}</p>
@@ -159,7 +150,7 @@ export default function StudentDashboard() {
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
               <span style={{ fontSize: 30, fontWeight: 500, color: '#C3C3C3', letterSpacing: -0.5 }}>
-                {walletUnavailable ? '—' : showBal ? `₦${(profile?.wallet?.balance ?? 0).toLocaleString()}` : '₦• • • •'}
+                {balance === null ? '—' : showBal ? `₦${balance.toLocaleString()}` : '₦• • • •'}
               </span>
               <button onClick={() => setShowBal(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E2E2E2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -236,18 +227,27 @@ export default function StudentDashboard() {
             <button onClick={() => router.push('/transaction-history')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: BLUE, fontWeight: 500 }}>See all</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {transactions.map(tx => (
-              <div key={tx.id} style={{ background: 'white', padding: '14px 0', display: 'flex', alignItems: 'center', gap: 14, borderBottom: '1px solid #F5F5F5' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: tx.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <TxIcon type={tx.type} color={tx.iconColor} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 15, fontWeight: 500, color: '#333', margin: '0 0 3px' }}>{tx.name}</p>
-                  <p style={{ fontSize: 12, color: '#666', margin: 0 }}>{tx.time}</p>
-                </div>
-                <p style={{ fontSize: 15, fontWeight: 700, color: tx.amtColor, margin: 0 }}>{tx.amount}</p>
-              </div>
-            ))}
+            {transactions.length === 0 ? (
+              <p style={{ fontSize: 13, color: '#999', textAlign: 'center', padding: '20px 0' }}>No transactions yet</p>
+            ) : (
+              transactions.slice(0, 3).map(tx => {
+                const isCredit = tx.type === 'TOPUP'
+                return (
+                  <div key={tx._id} style={{ background: 'white', padding: '14px 0', display: 'flex', alignItems: 'center', gap: 14, borderBottom: '1px solid #F5F5F5' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 12, background: isCredit ? '#EFFFE7' : '#EAF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <TxIcon isCredit={isCredit} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 15, fontWeight: 500, color: '#333', margin: '0 0 3px' }}>{tx.metadata?.remark || (isCredit ? 'Wallet Top Up' : tx.type)}</p>
+                      <p style={{ fontSize: 12, color: '#666', margin: 0 }}>{timeLabel(tx.createdAt)}</p>
+                    </div>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: isCredit ? '#69EB23' : '#F94242', margin: 0 }}>
+                      {isCredit ? '+' : '-'}₦{tx.amount.toLocaleString()}
+                    </p>
+                  </div>
+                )
+              })
+            )}
           </div>
         </div>
       </div>

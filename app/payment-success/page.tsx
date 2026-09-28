@@ -1,9 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { pushWithState, useWizardState } from "@/lib/wizardState";
-import avatarYusuf from "@/assets/images/figma-avatar-yusuf.png";
+import Avatar from "@/components/Avatar";
 
 const BLUE = '#0066FF'
 
@@ -37,9 +36,10 @@ const GreenBadge = () => (
 )
 
 interface PaymentSuccessState {
-  type?: 'withdrawal' | 'addMoney' | 'driver'
+  type?: 'withdrawal' | 'driver'
   amount?: string | number
   driverName?: string
+  driverId?: string
 }
 
 export default function PaymentSuccess() {
@@ -47,15 +47,15 @@ export default function PaymentSuccess() {
   const state = useWizardState<PaymentSuccessState>()
 
   const isWithdrawal = state?.type === 'withdrawal'
-  const isAddMoney  = state?.type === 'addMoney'
   const amount = state?.amount ?? '150'
-  const driverName = state?.driverName ?? 'Yusuf'
+  const driverName = state?.driverName ?? 'Driver'
+  const driverId = state?.driverId
 
   return (
     <div style={{ minHeight: '100dvh', background: 'white', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
 
       {/* CONFETTI */}
-      {!isWithdrawal && !isAddMoney && CONFETTI_PIECES.map((p, i) => (
+      {!isWithdrawal && CONFETTI_PIECES.map((p, i) => (
         <div key={i} style={{
           position: 'absolute',
           left: p.left, top: p.top,
@@ -87,13 +87,11 @@ export default function PaymentSuccess() {
 
         <div style={{ textAlign: 'center', marginTop: 20, marginBottom: 32 }}>
           <p style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>
-            {isWithdrawal ? 'Withdrawal Successful 🎉' : isAddMoney ? 'Money Added! 🎉' : 'Money Sent! 🎉'}
+            {isWithdrawal ? 'Withdrawal Successful 🎉' : 'Money Sent! 🎉'}
           </p>
           <p style={{ fontSize: 14, color: '#666', margin: 0 }}>
             {isWithdrawal
               ? 'Your funds are on the way to your bank account.'
-              : isAddMoney
-              ? 'Your wallet has been topped up successfully.'
               : 'Transaction complete'}
           </p>
         </div>
@@ -103,8 +101,8 @@ export default function PaymentSuccess() {
           <div style={{ width: '100%', background: '#F0F4FF', borderRadius: 16, padding: '20px' }}>
             {[
               { label: 'Amount', value: `₦${amount}` },
-              { label: 'Time duration', value: '24h' },
-              { label: 'Date', value: 'March 19th, 2026' },
+              { label: 'Expected arrival', value: 'Within 24h' },
+              { label: 'Date', value: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
             ].map(({ label, value }) => (
               <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                 <span style={{ fontSize: 14, color: '#666' }}>{label}</span>
@@ -112,14 +110,9 @@ export default function PaymentSuccess() {
               </div>
             ))}
           </div>
-        ) : isAddMoney ? (
-          <div style={{ width: '100%', background: '#F0FFF4', borderRadius: 16, padding: '24px', textAlign: 'center' }}>
-            <p style={{ fontSize: 32, fontWeight: 800, color: '#22C55E', margin: '0 0 8px' }}>₦{amount}</p>
-            <p style={{ fontSize: 14, color: '#666', margin: 0 }}>Added to your wallet via Bank Transfer</p>
-          </div>
         ) : (
           <div style={{ width: '100%', background: '#F0FFF4', border: '1px solid #BBF7D0', borderRadius: 16, padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <Image src={avatarYusuf} alt="" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #BBF7D0' }} />
+            <Avatar name={driverName} size={56} style={{ border: '2px solid #BBF7D0' }} />
             <p style={{ fontSize: 15, color: '#333', margin: 0 }}>{driverName}&apos;s Money Received! 👍</p>
             <p style={{ fontSize: 26, fontWeight: 800, color: '#111', margin: 0 }}>₦{amount}</p>
           </div>
@@ -128,9 +121,9 @@ export default function PaymentSuccess() {
 
       {/* BOTTOM BUTTONS */}
       <div style={{ padding: '24px 20px 40px', display: 'flex', gap: 12, position: 'relative', zIndex: 1 }}>
-        {!isWithdrawal && !isAddMoney && (
+        {!isWithdrawal && (
           <button
-            onClick={() => pushWithState(router, '/receipt', { amount, driverName })}
+            onClick={() => pushWithState(router, '/receipt', { amount, driverName, driverId })}
             style={{ flex: 1, height: 52, borderRadius: 999, background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: BLUE }}
           >
             Share Receipt
@@ -138,7 +131,7 @@ export default function PaymentSuccess() {
         )}
         <button
           onClick={() => router.push(isWithdrawal ? '/driver-dashboard' : '/dashboard')}
-          style={{ flex: isWithdrawal || isAddMoney ? 1 : undefined, width: isWithdrawal || isAddMoney ? undefined : 160, height: 52, borderRadius: 999, background: BLUE, border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: 'white' }}
+          style={{ flex: isWithdrawal ? 1 : undefined, width: isWithdrawal ? undefined : 160, height: 52, borderRadius: 999, background: BLUE, border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: 'white' }}
         >
           Done
         </button>

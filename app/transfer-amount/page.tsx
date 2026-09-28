@@ -1,15 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { pushWithState } from "@/lib/wizardState";
-import avatarYusuf from "@/assets/images/figma-avatar-yusuf.png";
+import { api, getToken } from "@/lib/api";
+import { pushWithState, useWizardState } from "@/lib/wizardState";
+import Avatar from "@/components/Avatar";
 
 const BLUE = '#0066FF'
 
+interface TransferAmountState {
+  driverId?: string
+  tagId?: string
+  driverName?: string
+}
+
 export default function TransferAmount() {
   const router = useRouter()
+  const state = useWizardState<TransferAmountState>()
+  const rawDriverId = state?.driverId || state?.tagId
+  const driverId = rawDriverId ?? '—'
+  const [lookupName, setLookupName] = useState('')
+
+  useEffect(() => {
+    if (!rawDriverId) return
+    api.driverLookup(rawDriverId, getToken())
+      .then(res => setLookupName(res?.fullName || res?.name || ''))
+      .catch(() => {})
+  }, [rawDriverId])
+
+  const driverName = lookupName || state?.driverName || 'Driver'
   const [amount, setAmount] = useState('')
   const [remark, setRemark] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -30,10 +49,10 @@ export default function TransferAmount() {
 
       {/* DRIVER PROFILE ROW */}
       <div style={{ padding: '20px 20px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Image src={avatarYusuf} alt="" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover' }} />
+        <Avatar name={driverName} size={48} />
         <div>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#111', margin: '0 0 2px' }}>Yusuf Toheeb</p>
-          <p style={{ fontSize: 13, color: '#666', margin: 0 }}>BUS - 012</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#111', margin: '0 0 2px' }}>{driverName}</p>
+          <p style={{ fontSize: 13, color: '#666', margin: 0 }}>{driverId}</p>
         </div>
       </div>
 
@@ -86,8 +105,8 @@ export default function TransferAmount() {
             <div style={{ background: '#F8F9FF', borderRadius: 12, padding: '16px', marginBottom: 24 }}>
               <p style={{ fontSize: 13, fontWeight: 700, color: '#111', margin: '0 0 14px' }}>Transaction Details</p>
               {[
-                { label: 'Name', value: 'Yusuf Toheeb' },
-                { label: 'Driver ID', value: 'BUS - 012' },
+                { label: 'Name', value: driverName },
+                { label: 'Driver ID', value: driverId },
                 { label: 'Amount', value: `₦${Number(amount).toLocaleString()}` },
               ].map(({ label, value }) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #E5E7EB' }}>
@@ -102,7 +121,7 @@ export default function TransferAmount() {
                 style={{ flex: 1, height: 52, borderRadius: 999, background: '#F5F5F5', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: BLUE }}
               >Recheck</button>
               <button
-                onClick={() => { setShowModal(false); pushWithState(router, '/enter-pin', { amount, driverName: 'Yusuf Toheeb', driverId: 'BUS-012', remark }) }}
+                onClick={() => { setShowModal(false); pushWithState(router, '/enter-pin', { amount, driverName, driverId, remark }) }}
                 style={{ flex: 1, height: 52, borderRadius: 999, background: BLUE, border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 600, color: 'white' }}
               >Pay</button>
             </div>

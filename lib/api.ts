@@ -64,13 +64,18 @@ export const api = {
   driverOnboard: (fd: FormData, token?: Token) => postForm("/drivers/onboard", fd, token),
   driverDetails: (fd: FormData, token?: Token) => postForm("/drivers/details", fd, token),
   driverBank: (body: Body, token?: Token) => post("/drivers/bank", body, token),
+  driverLookup: (tag: string, token?: Token) => get(`/drivers/lookup/${encodeURIComponent(tag)}`, token),
   userProfile: (token?: Token) => get("/users/profile", token),
   driverProfile: (token?: Token) => get("/drivers/profile", token),
   walletDetails: (token?: Token) => get("/wallet/me", token),
+  walletBalance: (token?: Token) => get("/wallet/balance", token),
+  resolveAccount: (accountNumber: string, bankCode: string, token?: Token) =>
+    get(`/wallet/resolve-account?accountNumber=${encodeURIComponent(accountNumber)}&bankCode=${encodeURIComponent(bankCode)}`, token),
   walletTopup: (body: Body, token?: Token) => post("/wallet/topup", body, token),
   authorizeCardOtp: (body: Body, token?: Token) => post("/wallet/authorize-card-otp", body, token),
   setWalletPin: (body: Body, token?: Token) => post("/wallet/set-pin", body, token),
   walletTransfer: (body: Body, token?: Token) => post("/wallet/transfer", body, token),
+  walletWithdraw: (body: Body, token?: Token) => post("/wallet/withdraw", body, token),
   walletTransactions: (token?: Token) => get("/wallet/transactions", token),
 };
 
