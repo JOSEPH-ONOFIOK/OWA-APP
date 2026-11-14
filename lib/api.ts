@@ -44,6 +44,19 @@ async function postForm(path: string, formData: FormData, token?: Token) {
   return data;
 }
 
+async function patch(path: string, body: Body, token?: Token) {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetchWithTimeout(`${BASE}${path}`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || "Something went wrong");
+  return data;
+}
+
 async function get(path: string, token?: Token) {
   const headers: Record<string, string> = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -77,6 +90,36 @@ export const api = {
   walletTransfer: (body: Body, token?: Token) => post("/wallet/transfer", body, token),
   walletWithdraw: (body: Body, token?: Token) => post("/wallet/withdraw", body, token),
   walletTransactions: (token?: Token) => get("/wallet/transactions", token),
+  // Admin — driver approvals
+  adminDrivers: (token?: Token) => get("/admin/drivers", token),
+  adminApproveDriver: (id: string, token?: Token) =>
+    patch(`/admin/drivers/${encodeURIComponent(id)}/approve`, {}, token),
+  adminRejectDriver: (id: string, reason: string, token?: Token) =>
+    patch(`/admin/drivers/${encodeURIComponent(id)}/reject`, { reason }, token),
+  // Admin — vehicles / tags
+  adminVehicles: (token?: Token) => get("/admin/vehicles", token),
+  adminAddVehicle: (fd: FormData, token?: Token) => postForm("/admin/vehicles", fd, token),
+  // Admin — passengers
+  adminPassengers: (token?: Token) => get("/admin/passengers", token),
+  // Admin — transactions
+  adminTransactions: (token?: Token) => get("/admin/transactions", token),
+  adminTransaction: (id: string, token?: Token) => get(`/admin/transactions/${encodeURIComponent(id)}`, token),
+  // Admin — payouts / withdrawals
+  adminPayouts: (token?: Token) => get("/admin/payouts", token),
+  adminPayout: (id: string, token?: Token) => get(`/admin/payouts/${encodeURIComponent(id)}`, token),
+  adminApprovePayout: (id: string, token?: Token) =>
+    patch(`/admin/payouts/${encodeURIComponent(id)}/approve`, {}, token),
+  adminRejectPayout: (id: string, reason: string, token?: Token) =>
+    patch(`/admin/payouts/${encodeURIComponent(id)}/reject`, { reason }, token),
+  adminRetryPayout: (id: string, token?: Token) =>
+    patch(`/admin/payouts/${encodeURIComponent(id)}/retry`, {}, token),
+  // Admin — reports & issues
+  adminReports: (token?: Token) => get("/admin/reports", token),
+  adminResolveReport: (id: string, token?: Token) =>
+    patch(`/admin/reports/${encodeURIComponent(id)}/resolve`, {}, token),
+  // Admin — announcements
+  adminAnnouncements: (token?: Token) => get("/admin/announcements", token),
+  adminCreateAnnouncement: (body: Body, token?: Token) => post("/admin/announcements", body, token),
 };
 
 export const formatPhone = (local: string) => "+234" + local.replace(/\D/g, "").replace(/^0/, "");
@@ -100,3 +143,5 @@ export const getRoleFromToken = (token: string): string | null => {
     return null;
   }
 };
+
+export const isAdminRole = (role: string | null) => !!role && /admin/i.test(role);

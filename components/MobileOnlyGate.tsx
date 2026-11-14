@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import OwaLogo from "@/components/OwaLogo";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
@@ -16,6 +17,10 @@ const getServerSnapshot = () => false;
 
 export default function MobileOnlyGate({ children }: { children: React.ReactNode }) {
   const isDesktop = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const pathname = usePathname();
+
+  // The admin console is a desktop web app.
+  if (pathname?.startsWith("/admin")) return <>{children}</>;
 
   if (isDesktop) {
     return (
