@@ -57,6 +57,15 @@ async function patch(path: string, body: Body, token?: Token) {
   return data;
 }
 
+async function del(path: string, token?: Token) {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetchWithTimeout(`${BASE}${path}`, { method: "DELETE", headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message || "Something went wrong");
+  return data;
+}
+
 async function get(path: string, token?: Token) {
   const headers: Record<string, string> = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -115,10 +124,13 @@ export const api = {
     patch(`/admin/payouts/${encodeURIComponent(id)}/retry`, {}, token),
   // Admin — reports & issues
   adminReports: (token?: Token) => get("/admin/reports", token),
-  adminResolveReport: (id: string, token?: Token) =>
-    patch(`/admin/reports/${encodeURIComponent(id)}/resolve`, {}, token),
-  // Admin — announcements
-  adminAnnouncements: (token?: Token) => get("/admin/announcements", token),
+  adminResolveReport: (id: string, adminNote: string, token?: Token) =>
+    post(`/admin/reports/${encodeURIComponent(id)}/resolve`, adminNote ? { adminNote } : {}, token),
+  /** Soft-delete: hides the report from admin lists but keeps the record. */
+  adminDeleteReport: (id: string, token?: Token) => del(`/admin/reports/${encodeURIComponent(id)}`, token),
+  // Admin — announcements (audience: "ALL" | "STUDENT" | "DRIVER"; history is newest first)
+  adminAnnouncements: (page: number, limit: number, token?: Token) =>
+    get(`/admin/announcements?page=${page}&limit=${limit}`, token),
   adminCreateAnnouncement: (body: Body, token?: Token) => post("/admin/announcements", body, token),
 };
 
